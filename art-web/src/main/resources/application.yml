@@ -1,0 +1,11 @@
+server:
+  port: 8083
+
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://118.31.55.121:3306/artsystem?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+#    username: root
+#    password: GlassBottle*.
+  profiles:
+    active: common #,service
