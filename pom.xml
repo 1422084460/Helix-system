@@ -7,11 +7,12 @@
     <version>1.0.0</version>
     <name>art-system-boot</name>
     <packaging>pom</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>A Spring Boot Project</description>
 
     <modules>
         <module>art-common</module>
         <module>art-service</module>
+        <module>art-web</module>
     </modules>
 
     <properties>
@@ -23,7 +24,6 @@
         <mybatisplus.version>3.4.2</mybatisplus.version>
         <mybatis.version>2.1.4</mybatis.version>
         <jwt.version>3.4.0</jwt.version>
-<!--        <mysql.version>5.1.6</mysql.version>-->
         <mysql.version>8.0.13</mysql.version>
     </properties>
 
