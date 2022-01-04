@@ -24,7 +24,7 @@
     </build>
     <name>art-common</name>
     <packaging>jar</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>A Spring Boot Project</description>
 
     <properties>
         <java.version>1.8</java.version>
