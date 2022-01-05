@@ -25,6 +25,7 @@
         <mybatis.version>2.1.4</mybatis.version>
         <jwt.version>3.4.0</jwt.version>
         <mysql.version>8.0.13</mysql.version>
+        <alipay.version>3.4.27.ALL</alipay.version>
     </properties>
 
     <dependencies>
@@ -91,6 +92,12 @@
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
                 <version>${jwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay.version}</version>
             </dependency>
 
             <dependency>
