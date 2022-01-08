@@ -14,5 +14,5 @@ public class User {
     @TableField
     private String password;
     @TableField
-    private String imgUrl;
+    private String avatar;
 }

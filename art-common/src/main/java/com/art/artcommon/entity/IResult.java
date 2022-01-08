@@ -1,5 +1,6 @@
 package com.art.artcommon.entity;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,6 +71,12 @@ public class IResult extends HashMap<String,Object> {
 
         public IResultBuilder data(JSONObject data){
             this.data = data;
+            return this;
+        }
+
+        public IResultBuilder initData(Object data){
+            JSONObject object = (JSONObject) JSON.toJSON(data);
+            this.data = object;
             return this;
         }
 
