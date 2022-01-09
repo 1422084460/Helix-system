@@ -26,6 +26,7 @@
         <jwt.version>3.4.0</jwt.version>
         <mysql.version>8.0.13</mysql.version>
         <alipay.version>3.4.27.ALL</alipay.version>
+        <redis.version>2.3.7.RELEASE</redis.version>
     </properties>
 
     <dependencies>
@@ -108,6 +109,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${redis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -8,11 +8,11 @@ spring:
     username: root
     password: GlassBottle*.
 
-#    redis:
-#      database: 0
-#      host: 118.31.55.121
-#      port: 6379
-#      password: Happy
+  redis:
+    database: 0
+    host: 118.31.55.121
+    port: 6379
+    password: Happy
 #
 #    rabbitmq:
 #      host: 118.31.55.121
