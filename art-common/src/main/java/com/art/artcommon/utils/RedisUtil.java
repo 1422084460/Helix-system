@@ -1,6 +1,8 @@
 package com.art.artcommon.utils;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +12,7 @@ public class RedisUtil {
 
     private static StringRedisTemplate redisTemplate = SpringContextHolder.getBean(StringRedisTemplate.class);
 
-    public final static long NOT_EXPIRE = 60 * 60 * 48;
+    private final static long NOT_EXPIRE = 60 * 60 * 48;
 
     public static void set(String key,String data,long timeout, TimeUnit unit){
         redisTemplate.opsForValue().set(key, data,NOT_EXPIRE,TimeUnit.SECONDS);
@@ -56,5 +58,14 @@ public class RedisUtil {
 
     public static void delHashKey(String key1,String key2){
         redisTemplate.opsForHash().delete(key1,key2);
+    }
+
+    public static Long inc(String key,boolean ifGetFirst){
+        RedisAtomicLong atomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
+        if (ifGetFirst){
+            return atomicLong.getAndIncrement();
+        }else {
+            return atomicLong.incrementAndGet();
+        }
     }
 }
