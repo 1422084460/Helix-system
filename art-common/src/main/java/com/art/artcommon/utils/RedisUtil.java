@@ -1,10 +1,12 @@
 package com.art.artcommon.utils;
 
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RedisUtil {
@@ -69,6 +71,28 @@ public class RedisUtil {
             return atomicLong.getAndIncrement();
         }else {
             return atomicLong.incrementAndGet();
+        }
+    }
+
+    public static void pipLine(Map<String,String> setCmd,Map<String,Map<String,String>> hashCmd){
+        if (!hasKey("isPipAlready") || "false".equals(get("isInitAlready"))){
+            redisTemplate.executePipelined((RedisCallback<String>) connection -> {
+                connection.openPipeline();
+                connection.set("isInitAlready".getBytes(),"true".getBytes());
+                if (setCmd!=null){
+                    setCmd.forEach((key,value)->{
+                        connection.set(key.getBytes(),value.getBytes());
+                    });
+                }
+                if (hashCmd!=null){
+                    hashCmd.forEach((key,map)->{
+                        map.forEach((f,v)->{
+                            connection.hashCommands().hSet(key.getBytes(),f.getBytes(),v.getBytes());
+                        });
+                    });
+                }
+                return null;
+            },redisTemplate.getStringSerializer());
         }
     }
 }
