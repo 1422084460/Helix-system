@@ -9,3 +9,7 @@ spring:
 #    password: GlassBottle*.
   profiles:
     active: common #,service
+
+  devtools:
+    restart:
+      enabled: true
