@@ -14,8 +14,6 @@ public class User {
     @TableField
     private int id;
     @TableField
-    private String name;
-    @TableField
     private String email;
     @TableField
     private String password;
