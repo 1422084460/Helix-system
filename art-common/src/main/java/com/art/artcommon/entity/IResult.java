@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -14,7 +15,9 @@ import java.util.HashMap;
 
 @Data
 @NoArgsConstructor
-public class IResult extends HashMap<String,Object> {
+public class IResult extends HashMap<String,Object> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final String CODE_SUCCESS = "0000";
     private static final String CODE_FAIL = "9999";
