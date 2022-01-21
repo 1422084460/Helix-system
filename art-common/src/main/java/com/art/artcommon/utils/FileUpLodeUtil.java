@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 
 public class FileUpLodeUtil {
 
-    public static final String ServerPath = "http://118.31.55.121/usr/local/images/";
+    public static final String ServerPath = "http://127.0.0.1/usr/local/images/";
 
     public static void fileUpLoad(byte[] file,String filePath,String fileName) throws Exception {
         File targetFile = new File(filePath);

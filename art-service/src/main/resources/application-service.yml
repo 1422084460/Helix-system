@@ -8,3 +8,12 @@
 #    map-underscore-to-camel-case: false
 #    cache-enabled: false
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+spring:
+  rabbitmq:
+    host: 118.31.55.121
+    port: 5672
+    username: ems
+    password: 123
+    virtual-host: /
+    connection-timeout: 60s

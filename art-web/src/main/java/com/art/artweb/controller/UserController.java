@@ -1,27 +1,37 @@
 package com.art.artweb.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.art.artcommon.constant.R;
+import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.User;
-//import com.art.artcommon.mapper.UserMapper;
-import com.art.artcommon.utils.JWTUtils;
-import org.springframework.transaction.annotation.Transactional;
+import com.art.artcommon.utils.Tools;
+import com.art.artservice.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
-//    @Resource
-//    private UserMapper userMapper;
+    @Autowired
+    private UserService userService;
 
+    /**
+     * 用户登录
+     * @param data
+     * @return
+     */
     @RequestMapping("/login")
-    public String login(@RequestBody User user){
-        return null;
+    public IResult login(@RequestBody String data){
+        String login = userService.login(data);
+        if (login.equals("登录成功")){
+            return IResult.success(null);
+        }
+        return IResult.fail(null,login,"9999");
     }
 
     /**
@@ -29,19 +39,24 @@ public class UserController {
      * @param data
      */
     @RequestMapping("/register")
-    @Transactional
-    public void register(@RequestBody String data){
+    public IResult register(@RequestBody String data){
         System.out.println(data);
-        Map map = JSON.parseObject(data);
-        map.remove("timestamp");
-        String token = JWTUtils.getToken(map);
-        System.out.println(token);
-//        String image = user.getImgUrl();
-//        User user1 = new User();
-//        user1.setImgUrl(image);
-//        UpdateWrapper updateWrapper = new UpdateWrapper();
-//        updateWrapper.eq("email","123456@qq.com");
-//        updateWrapper.set("imgUrl",image);
-//        userMapper.update(null,updateWrapper);
+        JSONObject jsonObject = JSON.parseObject(data);
+        jsonObject.remove("confirm_pwd");
+        jsonObject.remove("code");
+        String date = Tools.date_To_Str((Long) jsonObject.get("timestamp"));
+        jsonObject.remove("timestamp");
+        jsonObject.put("create_time",date);
+        String s = jsonObject.toJSONString();
+        User user = JSON.parseObject(s,new TypeReference<User>(){});
+        int status = userService.register(user);
+        if(status==1){
+            String[] args = {"username","status"};
+            String token = userService.createToken(s, args);
+            JSONObject object = new JSONObject();
+            object.put("token",token);
+            return IResult.success(object);
+        }
+        return IResult.fail(null,"注册失败", R.CODE_FAIL);
     }
 }

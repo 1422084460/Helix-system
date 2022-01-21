@@ -13,6 +13,8 @@ public class JWTUtils {
     //设置密钥
     private static final String signature = "!@#qdh%f(sj&";
 
+    private static final int EXPIRE_TIME = 60*60*24;
+
     //生成token
     public static String getToken(Map<String,String> map){
         JWTCreator.Builder builder = JWT.create();
@@ -20,7 +22,7 @@ public class JWTUtils {
             builder.withClaim(k,v);
         });
         Calendar instance = Calendar.getInstance();
-        instance.add(Calendar.SECOND,60);
+        instance.add(Calendar.SECOND,EXPIRE_TIME);
         builder.withExpiresAt(instance.getTime());
         return builder.sign(Algorithm.HMAC256(signature)).toString();
     }
