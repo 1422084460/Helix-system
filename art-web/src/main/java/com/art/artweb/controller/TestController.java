@@ -5,9 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.JWTUtils;
-import com.art.artservice.service.TestService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,13 +80,4 @@ public class TestController {
 //        }
 //    }
 
-    @Autowired
-    private TestService service;
-
-    @RequestMapping("/veritySth")
-    public String veritySth(){
-        System.out.println("进来了");
-//        TestService service = new TestService();
-        return service.getUser().getEmail();
-    }
 }

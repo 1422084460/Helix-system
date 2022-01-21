@@ -2,9 +2,7 @@ package com.art.artweb;
 
 import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.RedisUtil;
-import com.art.artservice.service.TestService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -16,9 +14,6 @@ import java.util.Map;
 @Slf4j
 public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
 
-    @Autowired
-    private TestService service;
-
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
         initStore();
@@ -28,7 +23,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
     private void initRedis() {
         if (!RedisUtil.hasKey("isInitAlready")){
             Map<String,String> map = new HashMap<>();
-            String email = service.getUser().getEmail();
+            String email = "getEmail";
             map.put("test",email);
             RedisUtil.pipLine(map,null);
         }
