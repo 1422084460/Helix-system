@@ -1,6 +1,8 @@
 package com.art.artcommon.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class User {
 
+    @TableId(type = IdType.AUTO)
     private Integer id;
     @TableField
     private String username;
