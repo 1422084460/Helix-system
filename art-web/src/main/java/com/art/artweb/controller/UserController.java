@@ -38,10 +38,10 @@ public class UserController {
                 String s = JSONArray.toJSON(user).toString();
                 String[] args = {"username","status","email"};
                 token = userService.createToken(s,args);
+                JSONObject object = new JSONObject();
+                object.put("token",token);
+                return IResult.success(object);
             }
-            JSONObject object = new JSONObject();
-            object.put("token",token);
-            return IResult.success(object);
         }
         return loginStatus;
     }
