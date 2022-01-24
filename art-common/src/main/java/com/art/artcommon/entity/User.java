@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class User {
-    @TableField
-    private int id;
+
+    private Integer id;
     @TableField
     private String username;
     @TableField

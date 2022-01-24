@@ -52,6 +52,5 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         response.setContentType("application/json; charset=utf-8");
         Object json = JSONObject.toJSON(res);
         response.getWriter().println(json);
-        return;
     }
 }

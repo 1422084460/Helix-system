@@ -13,8 +13,8 @@ import lombok.experimental.Accessors;
 @ToString
 @Accessors(chain = true)
 public class User_log {
-    @TableField
-    private int id;
+
+    private Integer id;
     @TableField
     private String username;
     @TableField
