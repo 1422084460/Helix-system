@@ -35,6 +35,10 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         }catch (TokenExpiredException e){
             log.error("用户"+name+"访问："+request.getRequestURI()+"接口异常===>>"+e.getMessage());
             res = IResult.fail(null,R.MSG_TOKEN_EXPIRE,R.CODE_TOKEN_EXPIRE);
+            if (request.getRequestURI().equals("/api/user/login")){
+                Store.getInstance().put(name,Store.getInstance().MainDataPut("token验证", res));
+                return true;
+            }
         }catch (AlgorithmMismatchException e){
             log.error("用户"+name+"访问："+request.getRequestURI()+"接口异常===>>"+e.getMessage());
             res = IResult.fail(null,R.MSG_TOKEN_ALGORITHM_MISMATCH,R.CODE_TOKEN_ALGORITHM_MISMATCH);
