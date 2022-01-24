@@ -26,4 +26,12 @@ public class Store extends HashMap<String,HashMap<String,Object>> {
         map.put(k,v);
         return map;
     }
+
+    public boolean hasKey(String key){
+        return store.get(key) != null;
+    }
+
+    public boolean hasInnerKey(String key,String innerKey){
+        return store.get(key).get(innerKey) != null;
+    }
 }

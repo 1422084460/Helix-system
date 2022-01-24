@@ -2,6 +2,7 @@ package com.art.artservice.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.User;
 import com.art.artcommon.entity.User_log;
 import com.art.artcommon.mapper.UserMapper;
@@ -100,7 +101,7 @@ public class UserService {
      * @param data
      * @return
      */
-    public String login(String data){
+    public IResult login(String data){
         Map map = JSON.parseObject(data);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("email",map.get("email")).eq("password",map.get("password"));
@@ -111,8 +112,10 @@ public class UserService {
             String date = Tools.date_To_Str((long) map.get("timestamp"));
             userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date);
             handler.handler("user_log",JSONObject.toJSONString(userLog));
-            return "登录成功";
+            JSONObject object = new JSONObject();
+            object.put("user",user);
+            return IResult.success(object);
         }
-        return "账号或密码错误!";
+        return IResult.fail(null,"账号或密码错误!","9999");
     }
 }

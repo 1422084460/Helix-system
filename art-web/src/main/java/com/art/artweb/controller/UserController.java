@@ -1,10 +1,12 @@
 package com.art.artweb.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.entity.User;
 import com.art.artcommon.utils.Tools;
 import com.art.artservice.service.UserService;
@@ -27,11 +29,21 @@ public class UserController {
      */
     @RequestMapping("/login")
     public IResult login(@RequestBody String data){
-        String login = userService.login(data);
-        if (login.equals("登录成功")){
-            return IResult.success(null);
+        String token = "";
+        IResult loginStatus = userService.login(data);
+        if (loginStatus.isSuccess()){
+            IResult res = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
+            if (res.getCode().equals("9101")){
+                Object user = loginStatus.getData().get("user");
+                String s = JSONArray.toJSON(user).toString();
+                String[] args = {"username","status","email"};
+                token = userService.createToken(s,args);
+            }
+            JSONObject object = new JSONObject();
+            object.put("token",token);
+            return IResult.success(object);
         }
-        return IResult.fail(null,login,"9999");
+        return loginStatus;
     }
 
     /**
@@ -51,7 +63,7 @@ public class UserController {
         User user = JSON.parseObject(s,new TypeReference<User>(){});
         int status = userService.register(user);
         if(status==1){
-            String[] args = {"username","status"};
+            String[] args = {"username","status","email"};
             String token = userService.createToken(s, args);
             JSONObject object = new JSONObject();
             object.put("token",token);
