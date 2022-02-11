@@ -32,7 +32,7 @@ public class Tools {
     }
 
     /**
-     * 时间戳转字符串,格式 yyyy-MM-dd hh:mm:ss
+     * 时间戳转字符串,格式 yyyy-MM-dd HH:mm:ss
      * @param time 时间戳
      * @return String
      */
