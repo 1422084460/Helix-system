@@ -4,6 +4,9 @@ package com.art.artcommon.constant;
  *  定义常量
  */
 public class R {
+    /**
+     * 结果相关
+     */
     //成功
     public static final String CODE_SUCCESS = "0000";
     //失败
@@ -14,6 +17,10 @@ public class R {
     public static final String CODE_EXCEPTION = "9000";
     //成功信息
     public static final String CODE_MSG_SUCCESS = "SUCCESS";
+
+    /**
+     * token相关
+     */
     //token过期
     public static final String CODE_TOKEN_EXPIRE = "9101";
     //token签名无效
@@ -30,4 +37,13 @@ public class R {
     public static final String MSG_TOKEN_INVALID = "token无效";
     //token算法不一致
     public static final String MSG_TOKEN_ALGORITHM_MISMATCH = "token算法不一致";
+
+    /**
+     * 操作相关
+     */
+    public static final String USER_LOGIN = "用户登录";
+    public static final String USER_LOGOUT = "用户退出";
+    public static final String USER_CHANGE_PWD = "用户修改密码";
+    public static final String USER_CANCEL = "用户注销";
+    public static final String USER_CALL = "用户访问接口";
 }

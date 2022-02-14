@@ -2,6 +2,7 @@ package com.art.artservice.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.User;
 import com.art.artcommon.entity.User_log;
@@ -110,7 +111,7 @@ public class UserService {
             handler = SpringContextHolder.getBean("directHandler");
             User_log userLog = new User_log();
             String date = Tools.date_To_Str((long) map.get("timestamp"));
-            userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent("用户登录");
+            userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent(R.USER_LOGIN);
             handler.handler("user_log",JSONObject.toJSONString(userLog));
             JSONObject object = new JSONObject();
             object.put("user",user);
