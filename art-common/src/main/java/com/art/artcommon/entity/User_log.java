@@ -24,4 +24,6 @@ public class User_log {
     private String email;
     @TableField
     private String login_time;
+    @TableField
+    private String event;
 }

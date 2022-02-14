@@ -110,7 +110,7 @@ public class UserService {
             handler = SpringContextHolder.getBean("directHandler");
             User_log userLog = new User_log();
             String date = Tools.date_To_Str((long) map.get("timestamp"));
-            userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date);
+            userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent("用户登录");
             handler.handler("user_log",JSONObject.toJSONString(userLog));
             JSONObject object = new JSONObject();
             object.put("user",user);
