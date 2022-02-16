@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：命名空间，在mapper代理开时，这里必需是类的全限定名-->
+<mapper namespace="com.art.artcommon.mapper.User_logMapper">
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO User_Log(username,email,login_time,event) values
+        <foreach collection="list" item="item" separator="," close=";">
+            (#{item.username},#{item.email},#{item.login_time},#{item.event})
+        </foreach>
+    </insert>
+
+</mapper>
