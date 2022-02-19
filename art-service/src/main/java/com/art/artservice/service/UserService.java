@@ -109,14 +109,14 @@ public class UserService {
         User user = userMapper.selectOne(wrapper);
         if (user!=null){
             handler = SpringContextHolder.getBean("directHandler");
-            User_log userLog = new User_log();
             String date = Tools.date_To_Str((long) map.get("timestamp"));
-            userLog.setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent(R.USER_LOGIN);
-            handler.handler("user_log",JSONObject.toJSONString(userLog));
+            User_log userLog = new User_log().setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent(R.USER_LOGIN);
+            handler.handler("batchSyncTask_user_log",JSONObject.toJSONString(userLog));
             JSONObject object = new JSONObject();
+            user.setPassword("");
             object.put("user",user);
             return IResult.success(object);
         }
-        return IResult.fail(null,"账号或密码错误!","9999");
+        return IResult.fail(null,"账号或密码错误!",R.CODE_FAIL);
     }
 }

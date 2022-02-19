@@ -5,6 +5,7 @@ import com.art.artcommon.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
         initRedis();
     }
 
+    @Order(2)
     private void initRedis() {
         if (!RedisUtil.hasKey("isInitAlready")){
             Map<String,String> map = new HashMap<>();
@@ -33,6 +35,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
     /**
      * 初始化全局变量 Store
      */
+    @Order(1)
     private void initStore(){
         Store.getInstance();
         log.info("store初始化完成......");
