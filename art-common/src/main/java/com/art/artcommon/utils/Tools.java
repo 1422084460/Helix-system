@@ -78,8 +78,11 @@ public class Tools {
      */
     public static List<Integer> removeCursor(List<Integer> list,int sortedListSize){
         int distance = sortedListSize - list.size();
-        Random random = new Random();
-        int cursor = random.nextInt(distance);
-        return list.stream().map(i -> i+cursor).collect(Collectors.toList());
+        if (distance!=0){
+            Random random = new Random();
+            int cursor = random.nextInt(distance);
+            return list.stream().map(i -> i+cursor).collect(Collectors.toList());
+        }
+        return list;
     }
 }
