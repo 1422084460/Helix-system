@@ -8,3 +8,10 @@ spring:
   devtools:
     restart:
       enabled: true
+
+task:
+  pool:
+    corePoolSize: 20
+    maxPoolSize: 40
+    keepAliveSeconds: 300
+    queueCapacity: 50
