@@ -65,6 +65,10 @@ public class RedisUtil {
         return redisTemplate.hasKey(key);
     }
 
+    public static Boolean hasHashKey(String key,Object hashKey){
+        return redisTemplate.opsForHash().hasKey(key, hashKey);
+    }
+
     public static Long inc(String key,boolean ifGetFirst){
         RedisAtomicLong atomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
         if (ifGetFirst){
