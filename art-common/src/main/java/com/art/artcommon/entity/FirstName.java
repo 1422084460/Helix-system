@@ -5,31 +5,25 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-/**
- * description
- *
- * @author lou
- * @create 2022/3/24
- */
 @Data
-@TableName("Error_Log")
+@NoArgsConstructor
+@TableName("First_Name")
 @Accessors(chain = true)
-public class Error_log {
+public class FirstName {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
     @TableField
-    private String error_msg;
+    private String first_name;
     @TableField
-    private String error_code;
+    private String style;
     @TableField
-    private String interface_path;
+    private String category;
     @TableField
-    private String caller;
+    private int has_num;
     @TableField
-    private long timestamp;
-    @TableField
-    private String devInfo;
+    private String area;
 }
