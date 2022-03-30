@@ -4,6 +4,7 @@ import com.art.artcommon.entity.Error_log;
 import com.art.artcommon.mapper.Error_logMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,9 @@ public class AsyncTaskMain {
     @Autowired
     private Error_logMapper errorLogMapper;
 
+    @Value("${dev-pattern.devInfo}")
+    private String devInfo;
+
     @Async
     public void doAsync(){
         try {
@@ -39,7 +43,8 @@ public class AsyncTaskMain {
                 .setError_code(code)
                 .setInterface_path(path)
                 .setCaller(Thread.currentThread().getName())
-                .setTimestamp(timestamp);
+                .setTimestamp(timestamp)
+                .setDevInfo(devInfo);
         try {
             errorLogMapper.insert(log);
         }catch (Exception e){

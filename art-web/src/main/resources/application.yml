@@ -15,3 +15,6 @@ task:
     maxPoolSize: 40
     keepAliveSeconds: 300
     queueCapacity: 50
+
+dev-pattern:
+  devInfo: debug
