@@ -11,6 +11,18 @@ spring:
     port: 6379
     password: Happy
 
+  data:
+    mongodb:
+      host: 118.31.55.121
+      port: 27017
+      database: art-data
+      username: admin3
+      password: '142208'
+      authentication-database: art-data
+      #uri: mongodb://admin2:142208@118.31.55.121/art-data?authSource=art-data
+      entity:
+        base-package: com.art.artcommon.mongo
+
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
 

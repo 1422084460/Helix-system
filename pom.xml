@@ -29,6 +29,8 @@
         <redis.version>2.3.7.RELEASE</redis.version>
         <amqp.version>2.3.7.RELEASE</amqp.version>
         <aop.version>2.3.5.RELEASE</aop.version>
+        <mongo.version>2.3.7.RELEASE</mongo.version>
+        <morphia.version>1.6.1</morphia.version>
     </properties>
 
     <dependencies>
@@ -126,6 +128,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${redis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                <version>${mongo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.morphia.morphia</groupId>
+                <artifactId>core</artifactId>
+                <version>${morphia.version}</version>
             </dependency>
 
             <dependency>
