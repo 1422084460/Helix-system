@@ -7,6 +7,8 @@ import com.art.artcommon.entity.LastName;
 import com.art.artcommon.entity.NamePackage;
 import com.art.artcommon.mapper.FirstNameMapper;
 import com.art.artcommon.mapper.LastNameMapper;
+import com.art.artcommon.mongo.NameAdopted;
+import com.art.artcommon.utils.MongoUtils;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,6 +30,8 @@ public class StoryService {
     private FirstNameMapper first;
     @Autowired
     private LastNameMapper last;
+
+    private static final String FULL_CLASS_NAME = "com.art.artcommon.mongo.NameAdopted";
 
     /**
      * 创建名字总方法，默认生成30个
@@ -204,5 +208,43 @@ public class StoryService {
             nid++;
         }
         return list;
+    }
+
+    /**
+     * 获取对应采用名集合
+     * @param email 邮箱名
+     * @return List<NamePackage>
+     */
+    public List<NamePackage> getAdoptedName(String email){
+        List<?> list = MongoUtils.queryByFilterOne(FULL_CLASS_NAME, "email", email);
+        if (list!=null){
+            NameAdopted n = (NameAdopted) list.get(0);
+            return n.getNameList();
+        }
+        return null;
+    }
+
+    /**
+     * 添加采用名字
+     * @param name 打包名
+     */
+    public void addAdoptedName(NamePackage name,String email){
+        List<NamePackage> list = getAdoptedName(email);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        list.add(name);
+        MongoUtils.updateOne(FULL_CLASS_NAME,"email","nameList",email,list);
+    }
+
+    /**
+     * 初始化表信息
+     * @param email 邮箱名
+     */
+    public void initTableNameAdopted(String email){
+        String[] f = {"email"};
+        Class<?>[] c = {email.getClass()};
+        Object[] o = {email};
+        MongoUtils.saveOne(FULL_CLASS_NAME,f,c,o);
     }
 }

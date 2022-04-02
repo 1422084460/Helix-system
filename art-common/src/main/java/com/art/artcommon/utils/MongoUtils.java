@@ -75,10 +75,10 @@ public class MongoUtils {
         }
     }
 
-    public static void updateOne(String fullClassName,String queryField,String updateField,Object originValue,Object newValue){
+    public static void updateOne(String fullClassName,String queryField,String updateField,Object queryValue,Object newValue){
         try {
             Class<?> clazz = Class.forName(fullClassName);
-            Query query = datastore.createQuery(clazz).field(queryField).equal(originValue);
+            Query query = datastore.createQuery(clazz).field(queryField).equal(queryValue);
             UpdateOperations<?> operations = datastore.createUpdateOperations(clazz).set(updateField,newValue);
             datastore.update(query,operations);
         }catch (Exception e){
