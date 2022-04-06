@@ -8,6 +8,10 @@ public class Store extends HashMap<String,HashMap<String,Object>> {
 
     private Store(){}
 
+    private static class makeStore{
+        private static final Store store = new Store();
+    }
+
     /**
      * 不需要单例，但需要考虑保存时的线程安全，即多个用户可能会用同一个key
      * 所以key可以放用户唯一标识即用户id，value放HashMap
@@ -15,10 +19,7 @@ public class Store extends HashMap<String,HashMap<String,Object>> {
      * @return
      */
     public static Store getInstance(){
-        if (store==null){
-            store = new Store();
-        }
-        return store;
+        return makeStore.store;
     }
 
     public HashMap<String, Object> MainDataPut(String k,Object v){
