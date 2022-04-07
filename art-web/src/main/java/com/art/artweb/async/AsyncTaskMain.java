@@ -2,6 +2,7 @@ package com.art.artweb.async;
 
 import com.art.artcommon.entity.Error_log;
 import com.art.artcommon.mapper.Error_logMapper;
+import com.art.artcommon.utils.Tools;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,5 +51,10 @@ public class AsyncTaskMain {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Async
+    public void asyncSendCode(String receiver,String code){
+        Tools.sendEmail(receiver, code);
     }
 }

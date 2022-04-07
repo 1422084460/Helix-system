@@ -1,5 +1,8 @@
 package com.art.artcommon.utils;
 
+import org.apache.commons.mail.HtmlEmail;
+import org.springframework.util.DigestUtils;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,5 +87,25 @@ public class Tools {
             return list.stream().map(i -> i+cursor).collect(Collectors.toList());
         }
         return list;
+    }
+
+    public static String toMd5(String pwd){
+        return DigestUtils.md5DigestAsHex(pwd.getBytes());
+    }
+
+    public static void sendEmail(String receiver,String code){
+        try {
+            HtmlEmail html = new HtmlEmail();
+            html.setHostName("smtp.qq.com");
+            html.setCharset("utf-8");
+            html.addTo(receiver);
+            html.setFrom("1544096285@qq.com","Creator服务");
+            html.setAuthentication("1544096285@qq.com","rxgauhezhrysihjj");
+            html.setSubject("验证码");
+            html.setMsg("验证码:<"+code+">");
+            html.send();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

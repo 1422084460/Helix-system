@@ -31,6 +31,7 @@
         <aop.version>2.3.5.RELEASE</aop.version>
         <mongo.version>2.3.7.RELEASE</mongo.version>
         <morphia.version>1.6.1</morphia.version>
+        <email.version>1.5</email.version>
     </properties>
 
     <dependencies>
@@ -140,6 +141,12 @@
                 <groupId>dev.morphia.morphia</groupId>
                 <artifactId>core</artifactId>
                 <version>${morphia.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-email</artifactId>
+                <version>${email.version}</version>
             </dependency>
 
             <dependency>
