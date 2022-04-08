@@ -1,5 +1,6 @@
 package com.art.artcommon.utils;
 
+import com.art.artcommon.config.EmailConfig;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.util.DigestUtils;
 
@@ -96,12 +97,12 @@ public class Tools {
     public static void sendEmail(String receiver,String code){
         try {
             HtmlEmail html = new HtmlEmail();
-            html.setHostName("smtp.qq.com");
-            html.setCharset("utf-8");
+            html.setHostName(EmailConfig.getHostName());
+            html.setCharset(EmailConfig.getCharset());
             html.addTo(receiver);
-            html.setFrom("1544096285@qq.com","Creator服务");
-            html.setAuthentication("1544096285@qq.com","rxgauhezhrysihjj");
-            html.setSubject("验证码");
+            html.setFrom(EmailConfig.getEmail(),EmailConfig.getName());
+            html.setAuthentication(EmailConfig.getUserName(),EmailConfig.getPassword());
+            html.setSubject(EmailConfig.getSubject());
             html.setMsg("验证码:<"+code+">");
             html.send();
         } catch (Exception e) {

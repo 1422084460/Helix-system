@@ -32,3 +32,14 @@ mybatis-plus:
     map-underscore-to-camel-case: false
     cache-enabled: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+send-email:
+  data:
+    hostName: smtp.qq.com
+    charset: utf-8
+    email: 1544096285@qq.com
+    name: Creator服务
+    userName: 1544096285@qq.com
+    password: rxgauhezhrysihjj
+    subject: 验证码
+
