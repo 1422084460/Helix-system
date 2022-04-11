@@ -1,6 +1,7 @@
 package com.art.artcommon.utils;
 
 import com.art.artcommon.config.EmailConfig;
+import com.art.artcommon.custominterface.Error;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.util.DigestUtils;
 
@@ -90,10 +91,20 @@ public class Tools {
         return list;
     }
 
+    /**
+     * md5加密
+     * @param pwd 需加密密码
+     * @return String
+     */
     public static String toMd5(String pwd){
         return DigestUtils.md5DigestAsHex(pwd.getBytes());
     }
 
+    /**
+     * 发送验证码邮件
+     * @param receiver 邮件接收者
+     * @param code 验证码
+     */
     public static void sendEmail(String receiver,String code){
         try {
             HtmlEmail html = new HtmlEmail();
@@ -108,5 +119,9 @@ public class Tools {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Object get$Msg(Class<?> clazz) throws NoSuchMethodException {
+        return clazz.getDeclaredMethod("initStore").getAnnotation(Error.class).name();
     }
 }
