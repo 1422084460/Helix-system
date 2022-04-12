@@ -8,6 +8,7 @@ import org.springframework.util.DigestUtils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Tools {
@@ -102,7 +103,7 @@ public class Tools {
 
     /**
      * 随机生成6位验证码
-     * @return
+     * @return String
      */
     private static String getCode(){
         String $ = "$%^_6";
@@ -130,6 +131,7 @@ public class Tools {
             html.setAuthentication(EmailConfig.getUserName(),EmailConfig.getPassword());
             html.setSubject(EmailConfig.getSubject());
             html.setMsg("验证码:<"+code+">");
+            RedisUtil.set("verifyCode",code,5, TimeUnit.MINUTES);
             html.send();
         } catch (Exception e) {
             e.printStackTrace();
