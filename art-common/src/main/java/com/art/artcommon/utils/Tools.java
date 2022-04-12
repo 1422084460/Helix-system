@@ -101,13 +101,28 @@ public class Tools {
     }
 
     /**
+     * 随机生成6位验证码
+     * @return
+     */
+    private static String getCode(){
+        String $ = "$%^_6";
+        Date date = new Date();
+        long time = date.getTime();
+        String pre = time + $;
+        String s = toMd5(pre);
+        Random random = new Random();
+        int i = random.nextInt(s.length() - 6);
+        return s.substring(i,i+6).toUpperCase();
+    }
+
+    /**
      * 发送验证码邮件
      * @param receiver 邮件接收者
-     * @param code 验证码
      */
-    public static void sendEmail(String receiver,String code){
+    public static void sendEmail(String receiver){
         try {
             HtmlEmail html = new HtmlEmail();
+            String code = getCode();
             html.setHostName(EmailConfig.getHostName());
             html.setCharset(EmailConfig.getCharset());
             html.addTo(receiver);
