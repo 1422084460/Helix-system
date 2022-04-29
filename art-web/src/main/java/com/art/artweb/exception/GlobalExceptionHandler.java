@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Date;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public IResult handlerException(Exception e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("系统异常",R.CODE_FAIL,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"系统异常", R.CODE_FAIL);
     }
@@ -31,6 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public IResult handlerNullPointerException(NullPointerException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("空指针异常",R.CODE_FAIL,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"空指针异常", R.CODE_FAIL);
     }
@@ -38,6 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenExpiredException.class)
     public IResult handlerTokenExpiredException(TokenExpiredException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("token过期",R.CODE_TOKEN_EXPIRE,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"token过期", R.CODE_TOKEN_EXPIRE);
     }
@@ -45,6 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SignatureVerificationException.class)
     public IResult handlerSignatureVerificationException(SignatureVerificationException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("token签名无效",R.CODE_TOKEN_SIGNATURE_INVALID,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"token签名无效", R.CODE_TOKEN_SIGNATURE_INVALID);
     }
@@ -52,6 +57,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlgorithmMismatchException.class)
     public IResult handlerAlgorithmMismatchException(AlgorithmMismatchException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("token算法不一致",R.CODE_TOKEN_ALGORITHM_MISMATCH,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"token算法不一致", R.CODE_TOKEN_ALGORITHM_MISMATCH);
     }
@@ -59,6 +65,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ClassCastException.class)
     public IResult handlerClassCastException(ClassCastException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+e.getMessage());
+        log.error("具体错误===>>"+Arrays.toString(e.getStackTrace()));
         task.asyncError("类型转换异常",R.CODE_FAIL,request.getRequestURI(),new Date().getTime());
         return IResult.fail(null,"类型转换异常", R.CODE_FAIL);
     }
