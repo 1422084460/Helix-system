@@ -1,6 +1,5 @@
 package com.art.artweb.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/story")
@@ -22,21 +20,19 @@ public class StoryController {
     private StoryService storyService;
 
     @RequestMapping("/createName")
-    public IResult createName(@RequestBody String data) {
-        System.out.println(data);
-        Map map = JSON.parseObject(data);
+    public IResult createName(@RequestBody JSONObject data) {
         try {
-            List<String> name = storyService.createName(map.get("area").toString(),
-                    map.get("category").toString(),
-                    map.get("style").toString(),
-                    Integer.parseInt(map.get("first_has_num").toString()),
-                    Integer.parseInt(map.get("last_has_num").toString()),
-                    Boolean.parseBoolean(map.get("has_inner_name").toString()));
+            List<String> name = storyService.createName(data.getString("area"),
+                    data.getString("category"),
+                    data.getString("style"),
+                    data.getIntValue("first_has_num"),
+                    data.getIntValue("last_has_num"),
+                    data.getBooleanValue("has_inner_name"));
             JSONObject object = new JSONObject();
             List<NamePackage> packages = storyService.doPackage(name,
-                    map.get("style").toString(),
-                    map.get("category").toString(),
-                    map.get("area").toString());
+                    data.getString("style"),
+                    data.getString("category"),
+                    data.getString("area"));
             object.put("nameList",packages);
             object.put("listSize",name.size());
             return IResult.success(object);
@@ -46,12 +42,12 @@ public class StoryController {
     }
 
     @RequestMapping("/adoptName")
-    public String adoptName(@RequestBody String data) {
+    public String adoptName(@RequestBody JSONObject data) {
         return "success";
     }
 
     @RequestMapping("/test")
-    public String test(@RequestBody String data) {
+    public String test(@RequestBody JSONObject data) {
         return "success";
     }
 }
