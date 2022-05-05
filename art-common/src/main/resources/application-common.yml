@@ -41,5 +41,5 @@ send-email:
     name: Creator服务
     userName: 1544096285@qq.com
     password: rxgauhezhrysihjj
-    subject: 验证码
+    subject: 验证码，5分钟内有效
 

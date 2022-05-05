@@ -6,3 +6,6 @@ spring:
     password: 123
     virtual-host: /
     connection-timeout: 60s
+
+python:
+  url: 127.0.0.1:9000
