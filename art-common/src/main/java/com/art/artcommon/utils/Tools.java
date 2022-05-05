@@ -98,7 +98,9 @@ public class Tools {
      * @return String
      */
     public static String toMd5(String pwd){
-        return DigestUtils.md5DigestAsHex(pwd.getBytes());
+        String $ = "$%^_5";
+        String newPwd = pwd + $;
+        return DigestUtils.md5DigestAsHex(newPwd.getBytes());
     }
 
     /**
