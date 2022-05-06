@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @Component
 @WebFilter("/")
-public class CrossFilter implements Filter {
+public class CorsFilter implements Filter {
     private static final String ORIGIN = "Origin";
 
     private static final String REFERER = "Referer";
