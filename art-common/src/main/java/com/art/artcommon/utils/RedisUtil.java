@@ -69,6 +69,14 @@ public class RedisUtil {
         return redisTemplate.opsForHash().hasKey(key, hashKey);
     }
 
+    public static void reFresh(String key){
+        if (hasKey(key)){
+            if (key.toUpperCase().startsWith("USER")){
+                set(key,get(key),10,TimeUnit.MINUTES);
+            }//else另作判断
+        }
+    }
+
     public static Long inc(String key,boolean ifGetFirst){
         RedisAtomicLong atomicLong = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
         if (ifGetFirst){
