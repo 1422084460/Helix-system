@@ -24,7 +24,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
                     .excludePathPatterns("/api/user/sendCode")
                     .excludePathPatterns("/api/user/verifyCode");
         }else {
-            System.out.println("========测试环境");
             registry.addInterceptor(new JWTInterceptor())
                     .excludePathPatterns("/api/**");
         }
