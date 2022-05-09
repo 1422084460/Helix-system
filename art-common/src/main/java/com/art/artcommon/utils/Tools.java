@@ -1,10 +1,14 @@
 package com.art.artcommon.utils;
 
 import com.art.artcommon.config.EmailConfig;
-import com.art.artcommon.custominterface.Error;
+import com.art.artcommon.custominterface.AuthL;
 import org.apache.commons.mail.HtmlEmail;
+import org.reflections.Reflections;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -140,7 +144,23 @@ public class Tools {
         }
     }
 
-    public static Object get$Msg(Class<?> clazz) throws NoSuchMethodException {
-        return clazz.getDeclaredMethod("initStore").getAnnotation(Error.class).name();
+    /**
+     * 获取注解中的字段信息
+     */
+    public static void getAnnotationField(){
+        String prefix = "com.art.artweb.controller";
+        Reflections reflections = new Reflections(prefix);
+        Set<Class<?>> set = reflections.getTypesAnnotatedWith(RestController.class);
+        for(Class<?> m : set){
+            Method[] methods = m.getDeclaredMethods();
+            for (Method method : methods) {
+                Annotation[] annotations = method.getAnnotations();
+                for (Annotation annotation : annotations){
+                    if (annotation.annotationType() == AuthL.class){
+                        System.out.println(method.getName());
+                    }
+                }
+            }
+        }
     }
 }
