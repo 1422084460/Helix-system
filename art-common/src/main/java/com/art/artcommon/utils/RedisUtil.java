@@ -65,7 +65,7 @@ public class RedisUtil {
         return redisTemplate.hasKey(key);
     }
 
-    public static Boolean hasHashKey(String key,Object hashKey){
+    public static Boolean hasHashKey(String key,String hashKey){
         return redisTemplate.opsForHash().hasKey(key, hashKey);
     }
 
@@ -74,6 +74,16 @@ public class RedisUtil {
             if (key.toUpperCase().startsWith("USER")){
                 set(key,get(key),10,TimeUnit.MINUTES);
             }//else另作判断
+        }
+    }
+
+    public static void reFresh(String key,String key2){
+        if (hasKey(key)){
+            if (hasHashKey(key, key2)) {
+                if (key.toUpperCase().startsWith("USER")) {
+                    setHash(key,key2, getHash(key,key2), 10, TimeUnit.MINUTES);
+                }//else另作判断
+            }
         }
     }
 
