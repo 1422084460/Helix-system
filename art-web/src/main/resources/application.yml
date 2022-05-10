@@ -18,3 +18,4 @@ task:
 
 dev-pattern:
   devInfo: debug
+  #devInfo: production
