@@ -1,6 +1,5 @@
 package com.art.artcommon.aspect;
 
-import com.art.artcommon.custominterface.TaskExe;
 import com.art.artcommon.utils.AopTargetUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,24 +24,22 @@ public class AllAspect {
 
     @Pointcut("@annotation(com.art.artcommon.custominterface.Error)")
     public void cutError(){}
-    @Pointcut("@annotation(com.art.artcommon.custominterface.TaskExe)")
-    public void cutTaskExe(){}
 
     @Before("cutError()")
     public void before(){
         System.out.println();
     }
 
-    @After("cutTaskExe()")
-    public void after(JoinPoint point) throws Exception {
-        Signature s = point.getSignature();
-        MethodSignature m = (MethodSignature)s;
-        Object target = point.getTarget();
-        Method method = target.getClass().getMethod(m.getName(),m.getParameterTypes());
-        TaskExe taskExe = method.getAnnotation(TaskExe.class);
-        String name = taskExe.name();
-        System.out.println("后置通知"+name);
-    }
+//    @After("cutTaskExe()")
+//    public void after(JoinPoint point) throws Exception {
+//        Signature s = point.getSignature();
+//        MethodSignature m = (MethodSignature)s;
+//        Object target = point.getTarget();
+//        Method method = target.getClass().getMethod(m.getName(),m.getParameterTypes());
+//        TaskExe taskExe = method.getAnnotation(TaskExe.class);
+//        String name = taskExe.name();
+//        System.out.println("后置通知"+name);
+//    }
 
     private String handlerError(HttpServletRequest req){
         return req.getRequestURI();
