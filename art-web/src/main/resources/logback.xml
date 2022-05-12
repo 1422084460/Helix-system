@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"></conversionRule>
+
     <!-- 项目名称 -->
     <property name="projectName" value="art-system" />
     <!-- 日志存放路径 -->
     <property name="log.path" value="D://usr/local/${projectName}-logs" />
     <!-- 日志输出格式 -->
-    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %clr(%-5level) --- [  %thread] %clr(%-40.40logger{39}){cyan}  : %msg%n" />
 
     <!-- 控制台输出 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
