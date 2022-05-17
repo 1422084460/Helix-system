@@ -11,6 +11,7 @@
 
     <modules>
         <module>art-common</module>
+        <module>art-search</module>
         <module>art-service</module>
         <module>art-web</module>
     </modules>
