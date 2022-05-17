@@ -54,7 +54,7 @@ public class AsyncTaskMain {
     }
 
     @Async
-    public void asyncSendCode(String receiver,String code){
-        Tools.sendEmail(receiver, code);
+    public void asyncSendCode(String receiver){
+        Tools.sendEmail(receiver);
     }
 }
