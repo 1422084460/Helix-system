@@ -10,7 +10,9 @@
     <description>A Personal Project</description>
 
     <modules>
+        <module>art-admin</module>
         <module>art-common</module>
+        <module>art-creator</module>
         <module>art-search</module>
         <module>art-service</module>
         <module>art-web</module>
