@@ -28,7 +28,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/login")
-    public IResult login(@RequestBody String data){
+    public IResult login(@RequestBody JSONObject data){
         String token = "";
         IResult loginStatus = userService.login(data);
         if (loginStatus.isSuccess()){
@@ -51,15 +51,13 @@ public class UserController {
      * @param data
      */
     @RequestMapping("/register")
-    public IResult register(@RequestBody String data){
-        System.out.println(data);
-        JSONObject jsonObject = JSON.parseObject(data);
-        jsonObject.remove("confirm_pwd");
-        jsonObject.remove("code");
-        String date = Tools.date_To_Str((Long) jsonObject.get("timestamp"));
-        jsonObject.remove("timestamp");
-        jsonObject.put("create_time",date);
-        String s = jsonObject.toJSONString();
+    public IResult register(@RequestBody JSONObject data){
+        data.remove("confirm_pwd");
+        data.remove("code");
+        String date = Tools.date_To_Str((Long) data.get("timestamp"));
+        data.remove("timestamp");
+        data.put("create_time",date);
+        String s = data.toJSONString();
         User user = JSON.parseObject(s,new TypeReference<User>(){});
         int status = userService.register(user);
         if(status==1){

@@ -3,6 +3,7 @@ package com.art.artadmin.listener;
 import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User_log;
 import com.art.artadmin.mapper.User_logMapper;
+import com.art.artcommon.utils.RedisUtil;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -30,6 +31,7 @@ public class SyncListener {
                 Store.getInstance().remove("batch_deliver");
                 q.drainTo(list,q.size());
                 mapper.insertBatch(list);
+                RedisUtil.set("user_log_queue_sync_finished","true");
             } catch (Exception e) {
                 e.printStackTrace();
             }

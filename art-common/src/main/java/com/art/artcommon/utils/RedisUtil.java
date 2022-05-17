@@ -15,6 +15,10 @@ public class RedisUtil {
 
     private final static long NOT_EXPIRE = 60 * 60 * 48;
 
+    public static void set(String key,String data){
+        redisTemplate.opsForValue().set(key, data);
+    }
+
     public static void set(String key,String data,long timeout, TimeUnit unit){
         redisTemplate.opsForValue().set(key, data,NOT_EXPIRE,TimeUnit.SECONDS);
         if (timeout > 0){

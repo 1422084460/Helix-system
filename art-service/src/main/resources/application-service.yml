@@ -1,11 +1,1 @@
-spring:
-  rabbitmq:
-    host: 118.31.55.121
-    port: 5672
-    username: ems
-    password: 123
-    virtual-host: /
-    connection-timeout: 60s
 
-python:
-  url: 127.0.0.1:9000

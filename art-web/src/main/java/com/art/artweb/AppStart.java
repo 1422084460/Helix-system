@@ -56,6 +56,9 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
             map.put("test",email);
             RedisUtil.pipLine(map,null);
         }
+        if (!RedisUtil.hasKey("user_log_queue_sync_finished")){
+            RedisUtil.set("user_log_queue_sync_finished","false");
+        }
         log.info("redis data initializes already...");
     }
 

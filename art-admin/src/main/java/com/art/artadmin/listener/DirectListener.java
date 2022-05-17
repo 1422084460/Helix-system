@@ -37,19 +37,25 @@ public class DirectListener {
         latch.countDown();
         batchQueue.offer(log);
         if (latch.getCount()==0){//队列已满
-            latch = new CountDownLatch(10);
-            Store.getInstance().put("batch_deliver",Store.getInstance().MainDataPut("user_log",batchQueue));
-            //调用处理方法
-            handler.handler("doBatchSync","ready");
-            //batchQueue.clear();
+            doDupThing();
         }else {//队列未满
             if (!RedisUtil.hasKey("ifQueueIsFull")){
-                latch = new CountDownLatch(10);
-                Store.getInstance().put("batch_deliver",Store.getInstance().MainDataPut("user_log",batchQueue));
-                handler.handler("doBatchSync","ready");
-                //batchQueue.clear();问题出在这里
+                doDupThing();
             }
             RedisUtil.set("ifQueueIsFull","false",60, TimeUnit.SECONDS);
+        }
+    }
+
+    private void doDupThing(){
+        latch = new CountDownLatch(10);
+        Store.getInstance().put("batch_deliver",Store.getInstance().MainDataPut("user_log",batchQueue));
+        handler.handler("doBatchSync","ready");
+        while (true){
+            if (RedisUtil.get("user_log_queue_sync_finished").equals("true")){
+                batchQueue.clear();
+                RedisUtil.set("user_log_queue_sync_finished","false");
+                break;
+            }
         }
     }
 }

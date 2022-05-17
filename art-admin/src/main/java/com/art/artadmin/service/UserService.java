@@ -75,6 +75,7 @@ public class UserService {
     public int register(User user){
         int status = 0;
         try {
+            user.setPassword(Tools.toMd5(user.getPassword()));
             status = userMapper.insert(user);
         }catch (Exception e){
             System.out.println("status:"+status);
@@ -102,15 +103,19 @@ public class UserService {
      * @param data
      * @return
      */
-    public IResult login(String data){
-        Map map = JSON.parseObject(data);
+    public IResult login(JSONObject data){
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("email",map.get("email")).eq("password",map.get("password"));
+        wrapper.eq("email",data.getString("email"))
+                .eq("password",Tools.toMd5(data.getString("password")));
         User user = userMapper.selectOne(wrapper);
         if (user!=null){
             handler = SpringContextHolder.getBean("directHandler");
-            String date = Tools.date_To_Str((long) map.get("timestamp"));
-            User_log userLog = new User_log().setUsername(user.getUsername()).setEmail(user.getEmail()).setLogin_time(date).setEvent(R.USER_LOGIN);
+            String date = Tools.date_To_Str(data.getLong("timestamp"));
+            User_log userLog = new User_log()
+                    .setUsername(user.getUsername())
+                    .setEmail(user.getEmail())
+                    .setLogin_time(date)
+                    .setEvent(R.USER_LOGIN);
             handler.handler("batchSyncTask_user_log",JSONObject.toJSONString(userLog));
             JSONObject object = new JSONObject();
             user.setPassword("");
