@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties({TaskThreadPoolConfig.class})
 @ComponentScan(basePackages = {"com.art"})
 @EnableAspectJAutoProxy(exposeProxy = true)
-@MapperScan(basePackages = {"com.art.artcommon.mapper"})
+@MapperScan(basePackages = {"com.art.**.mapper"})
 public class ArtWebApplication {
 
     public static void main(String[] args) {
