@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
+import com.art.artcommon.custominterface.Logs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User;
@@ -28,6 +29,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/login")
+    @Logs
     public IResult login(@RequestBody JSONObject data){
         String token = "";
         IResult loginStatus = userService.login(data);
@@ -51,6 +53,7 @@ public class UserController {
      * @param data
      */
     @RequestMapping("/register")
+    @Logs
     public IResult register(@RequestBody JSONObject data){
         data.remove("confirm_pwd");
         data.remove("code");
