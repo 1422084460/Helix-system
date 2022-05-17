@@ -42,12 +42,15 @@ public class StoryController {
     }
 
     @RequestMapping("/adoptName")
-    public String adoptName(@RequestBody JSONObject data) {
-        return "success";
-    }
-
-    @RequestMapping("/test")
-    public String test(@RequestBody JSONObject data) {
-        return "success";
+    public IResult adoptName(@RequestBody JSONObject data) {
+        try {
+            String name = "com.art.artcommon.mongo.NameAdopted";
+            String queryValue = data.getString("email");
+            Object o = data.get("name");
+            storyService.addAdoptedName((NamePackage) o,queryValue);
+            return IResult.success(null);
+        }catch (Exception e){
+            return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
+        }
     }
 }

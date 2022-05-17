@@ -46,4 +46,27 @@ public class R {
     public static final String USER_CHANGE_PWD = "用户修改密码";
     public static final String USER_CANCEL = "用户注销";
     public static final String USER_CALL = "用户访问接口";
+
+    /**
+     * 请求相关
+     */
+    public static final String SIMULATOR_REQUEST = "/api/simulator/{path}";
+
+    /**
+     * 文件相关
+     */
+    public static final String SAVE_DATA_PATH = "/usr/local/simulator/saveData.txt";
+
+    /**
+     * 验证相关
+     */
+    public static final String CODE_VERIFY_SUCCESS = "0010";
+    public static final String CODE_VERIFY_FAIL = "0011";
+    public static final String CODE_VERIFY_EXPIRE = "0012";
+
+    /**
+     * 用户相关
+     */
+    public static final String LOGIN_INVALID = "用户登录失效";
+    public static final String CODE_LOGIN_INVALID = "0013";
 }

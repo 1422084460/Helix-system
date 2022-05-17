@@ -1,8 +1,8 @@
 package com.art.artadmin.listener;
 
 import com.art.artcommon.entity.Store;
-import com.art.artcommon.entity.User_log;
-import com.art.artcommon.mapper.User_logMapper;
+import com.art.artadmin.entity.User_log;
+import com.art.artadmin.mapper.User_logMapper;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

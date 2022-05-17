@@ -3,7 +3,7 @@ package com.art.artadmin.listener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.entity.Store;
-import com.art.artcommon.entity.User_log;
+import com.art.artadmin.entity.User_log;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.SpringContextHolder;
 import com.art.artadmin.handler.Handler;

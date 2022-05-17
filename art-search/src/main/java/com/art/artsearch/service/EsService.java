@@ -1,7 +1,7 @@
 package com.art.artsearch.service;
 
-import com.art.artcommon.entity.User;
-import com.art.artcommon.mapper.UserMapper;
+import com.art.artadmin.entity.User;
+import com.art.artadmin.mapper.UserMapper;
 import com.art.artsearch.dao.ProductDao;
 import com.art.artsearch.dao.UserDao;
 import com.art.artsearch.document.Product;
