@@ -11,6 +11,7 @@
 
     <modules>
         <module>art-admin</module>
+        <module>art-blog</module>
         <module>art-common</module>
         <module>art-creator</module>
         <module>art-search</module>
