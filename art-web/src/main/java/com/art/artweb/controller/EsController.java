@@ -1,4 +1,4 @@
-package com.art.artsearch.controller;
+package com.art.artweb.controller;
 
 import com.art.artsearch.service.EsService;
 import org.springframework.beans.factory.annotation.Autowired;
