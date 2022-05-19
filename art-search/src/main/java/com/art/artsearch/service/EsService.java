@@ -41,7 +41,7 @@ public class EsService {
     }
 
     public void find(){
-        //productDao.findAll().forEach(System.out::println);
+        productDao.findAll().forEach(System.out::println);
         userDao.findAll().forEach(System.out::println);
     }
 
