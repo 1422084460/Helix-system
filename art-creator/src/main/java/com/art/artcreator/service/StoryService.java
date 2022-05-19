@@ -31,7 +31,7 @@ public class StoryService {
     @Autowired
     private LastNameMapper last;
 
-    private static final String FULL_CLASS_NAME = "com.art.artcommon.mongo.NameAdopted";
+    private static final String FULL_CLASS_NAME = "com.art.artcreator.mongo.NameAdopted";
 
     /**
      * 创建名字总方法，默认生成30个
