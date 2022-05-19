@@ -30,6 +30,12 @@
 
         <dependency>
             <groupId>com.art</groupId>
+            <artifactId>art-search</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.art</groupId>
             <artifactId>art-admin</artifactId>
             <version>1.0.0</version>
         </dependency>
