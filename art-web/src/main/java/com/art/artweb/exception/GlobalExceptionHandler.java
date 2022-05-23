@@ -1,6 +1,6 @@
 package com.art.artweb.exception;
 
-import com.art.artcommon.constant.CustomExp;
+import com.art.artcommon.constant.CustomException;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artweb.async.AsyncTaskMain;
@@ -80,8 +80,8 @@ public class GlobalExceptionHandler {
         return IResult.fail(null,e.getBindingResult().getFieldError().getDefaultMessage(), R.CODE_FAIL);
     }
 
-    @ExceptionHandler(CustomExp.class)
-    public IResult handlerCustomException(CustomExp e, HttpServletRequest request){
+    @ExceptionHandler(CustomException.class)
+    public IResult handlerCustomException(CustomException e, HttpServletRequest request){
         log.error("访问接口:"+request.getRequestURI()+"失败===>>"+"CustomExp:"+e.getMessage());
         return IResult.fail(null,e.getMessage(),e.getCode());
     }

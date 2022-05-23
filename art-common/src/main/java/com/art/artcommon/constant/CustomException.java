@@ -7,18 +7,18 @@ package com.art.artcommon.constant;
  * @author lou
  * @create 2022/5/7
  */
-public class CustomExp extends RuntimeException{
+public class CustomException extends RuntimeException{
 
     private String code;
     private String message;
 
-    public CustomExp(){}
+    public CustomException(){}
 
-    public CustomExp(String message){
+    public CustomException(String message){
         super(message);
     }
 
-    public CustomExp(String code,String message){
+    public CustomException(String code, String message){
         super(message);
         this.code = code;
         this.message = message;

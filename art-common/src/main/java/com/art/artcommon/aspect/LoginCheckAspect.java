@@ -1,7 +1,7 @@
 package com.art.artcommon.aspect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art.artcommon.constant.CustomExp;
+import com.art.artcommon.constant.CustomException;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.AuthL;
 import com.art.artcommon.utils.AopTargetUtils;
@@ -39,7 +39,7 @@ public class LoginCheckAspect {
             AuthL authL = AopTargetUtils.getTarget(target).getClass()
                     .getDeclaredMethod(methodName, JSONObject.class)
                     .getAnnotation(AuthL.class);
-            throw new CustomExp(R.CODE_LOGIN_INVALID,authL.message());
+            throw new CustomException(R.CODE_LOGIN_INVALID,authL.message());
         }
     }
 }
