@@ -7,6 +7,7 @@ import org.reflections.Reflections;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -162,5 +163,96 @@ public class Tools {
                 }
             }
         }
+    }
+
+    /**
+     * 检查 ip访问次数
+     * @param request
+     * @return
+     */
+    public static String checkIpVisitCount(HttpServletRequest request){
+        String ip = getIpAddr(request);
+        if (!RedisUtil.hasHashKey("ip",ip)){
+            RedisUtil.setHash("ip",ip,"0",30,TimeUnit.SECONDS);
+        }
+        Long nums = RedisUtil.inc(ip,false);
+        if (nums<=10){
+            return "请求正常...";
+        }else {
+            return "60秒内请求次数过多...";
+        }
+    }
+
+    /**
+     * 获取客户端 ip
+     * @param request
+     * @return
+     */
+    public static String getIpAddr(HttpServletRequest request){
+        if (request == null){
+            return "unknown";
+        }
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("X-Forwarded-For");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getRemoteAddr();
+        }
+        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : getMultistageReverseProxyIp(ip);
+    }
+
+    /**
+     * 从多级反向代理中获取第一个非unknown的ip地址
+     * @param ip
+     * @return
+     */
+    private static String getMultistageReverseProxyIp(String ip){
+        //多级反向代理检测
+        if (ip != null && ip.indexOf(",")>0){
+            final String[] ips = ip.trim().split(",");
+            for (String subIp : ips){
+                if (!isUnknown(subIp)){
+                    ip = subIp;
+                    break;
+                }
+            }
+        }
+        return ip;
+    }
+
+    /**
+     * 判断给定的字符串是否为unknown
+     * @param checkString
+     * @return
+     */
+    private static boolean isUnknown(String checkString){
+        return isBlank(checkString) || "unknown".equalsIgnoreCase(checkString);
+    }
+
+    /**
+     * 判断字符串是否为空
+     * @param cs
+     * @return
+     */
+    public static boolean isBlank(CharSequence cs){
+        int strLen;
+        if (cs != null && (strLen = cs.length())!=0){
+            for (int i=0;i<strLen;++i){
+                if (!Character.isWhitespace(cs.charAt(i))){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

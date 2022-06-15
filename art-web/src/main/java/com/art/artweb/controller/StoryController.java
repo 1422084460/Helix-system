@@ -2,7 +2,7 @@ package com.art.artweb.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.constant.R;
-import com.art.artcommon.custominterface.Logs;
+import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcreator.entity.NamePackage;
 import com.art.artcreator.service.StoryService;
@@ -21,7 +21,7 @@ public class StoryController {
     private StoryService storyService;
 
     @RequestMapping("/createName")
-    @Logs
+    @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
         try {
             List<String> name = storyService.createName(data.getString("area"),
@@ -44,7 +44,7 @@ public class StoryController {
     }
 
     @RequestMapping("/adoptName")
-    @Logs
+    @ShowArgs
     public IResult adoptName(@RequestBody JSONObject data) {
         try {
             String name = "com.art.artcommon.mongo.NameAdopted";

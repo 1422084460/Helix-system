@@ -25,7 +25,7 @@ public class LogAspect {
 
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
-    @Pointcut("@annotation(com.art.artcommon.custominterface.Logs)")
+    @Pointcut("@annotation(com.art.artcommon.custominterface.ShowArgs)")
     public void logCut(){}
 
     @Around("logCut()")
