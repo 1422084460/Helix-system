@@ -33,7 +33,7 @@ public class RedisUtil {
     public static void setHash(String key1,String key2,String data,long timeout, TimeUnit unit){
         redisTemplate.opsForHash().put(key1,key2,data);
         if (timeout > 0){
-            setExpire(key2, timeout, unit);
+            setExpire(key1, timeout, unit);
         }
     }
 
