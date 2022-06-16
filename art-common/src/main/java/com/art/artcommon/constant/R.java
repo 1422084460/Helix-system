@@ -50,7 +50,12 @@ public class R {
     /**
      * 请求相关
      */
-    public static final String SIMULATOR_REQUEST = "/api/simulator/{path}";
+    public static final String CODE_BAD_REQUEST = "9200";
+    public static final String MSG_BAD_REQUEST = "请求过于频繁，稍后再试";
+    public static final String CODE_BAD_REQUEST_AGAIN = "9201";
+    public static final String MSG_BAD_REQUEST_AGAIN = "请求过于频繁，请于";
+    public static final String CODE_ACCESS_DENIED = "9202";
+    public static final String MSG_ACCESS_DENIED = "拒绝访问";
 
     /**
      * 文件相关
