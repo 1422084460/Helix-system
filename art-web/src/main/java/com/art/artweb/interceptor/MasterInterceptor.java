@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class JWTInterceptor extends HandlerInterceptorAdapter {
+public class MasterInterceptor extends HandlerInterceptorAdapter {
     //拦截器于过滤器后执行
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
