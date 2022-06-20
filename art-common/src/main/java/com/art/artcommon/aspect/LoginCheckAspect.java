@@ -27,12 +27,13 @@ public class LoginCheckAspect {
 
     @Before("auth()")
     public void authLogin(JoinPoint point) throws Exception {
-        String key1 = "user_auth_login";
+        String prefix = "user_auth_";
         Object[] args = point.getArgs();
         JSONObject object = (JSONObject) args[0];
-        String key2 = object.getString("email");
-        if (RedisUtil.hasHashKey(key1,key2)){
-            RedisUtil.reFresh(key1,key2);
+        String suffix = object.getString("email");
+        String key = prefix + suffix;
+        if (RedisUtil.hasKey(key)){
+            RedisUtil.reFresh(key);
         }else {
             Object target = point.getTarget();
             String methodName = point.getSignature().getName();

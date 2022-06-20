@@ -9,12 +9,15 @@ import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User;
+import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/user")
@@ -35,6 +38,7 @@ public class UserController {
         IResult loginStatus = userService.login(data);
         if (loginStatus.isSuccess()){
             IResult res = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
+            RedisUtil.set("user_auth_" + data.getString("email"),"login",10, TimeUnit.SECONDS);
             if (res.getCode().equals("9101")){
                 Object user = loginStatus.getData().get("user");
                 String s = JSONArray.toJSON(user).toString();
