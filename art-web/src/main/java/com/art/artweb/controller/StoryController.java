@@ -20,6 +20,11 @@ public class StoryController {
     @Autowired
     private StoryService storyService;
 
+    /**
+     * 创建姓名
+     * @param data 请求数据
+     * @return IResult
+     */
     @RequestMapping("/createName")
     @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
@@ -43,6 +48,11 @@ public class StoryController {
         }
     }
 
+    /**
+     * 采用姓名
+     * @param data 请求数据
+     * @return IResult
+     */
     @RequestMapping("/adoptName")
     @ShowArgs
     public IResult adoptName(@RequestBody JSONObject data) {

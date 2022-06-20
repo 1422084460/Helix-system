@@ -25,8 +25,8 @@ public class UserController {
 
     /**
      * 用户登录
-     * @param data
-     * @return
+     * @param data 请求数据
+     * @return IResult
      */
     @RequestMapping("/login")
     @ShowArgs
@@ -49,8 +49,9 @@ public class UserController {
     }
 
     /**
-     * 用户注册：前端传json字符串，把里面的用户信息存到数据库中，其中一部分非敏感信息生成token并返回
-     * @param data
+     * 用户注册
+     * @param data 请求数据
+     * @return IResult
      */
     @RequestMapping("/register")
     @ShowArgs

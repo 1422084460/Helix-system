@@ -167,8 +167,8 @@ public class Tools {
 
     /**
      * 检查 ip访问次数
-     * @param request
-     * @return
+     * @param request 请求
+     * @return String
      */
     public static String checkIpVisitCount(HttpServletRequest request){
         String ip = getIpAddr(request);
@@ -185,8 +185,8 @@ public class Tools {
 
     /**
      * 获取客户端 ip
-     * @param request
-     * @return
+     * @param request 请求
+     * @return String
      */
     public static String getIpAddr(HttpServletRequest request){
         if (request == null){
@@ -213,8 +213,8 @@ public class Tools {
 
     /**
      * 从多级反向代理中获取第一个非unknown的ip地址
-     * @param ip
-     * @return
+     * @param ip ip地址
+     * @return String
      */
     private static String getMultistageReverseProxyIp(String ip){
         //多级反向代理检测
@@ -232,8 +232,8 @@ public class Tools {
 
     /**
      * 判断给定的字符串是否为unknown
-     * @param checkString
-     * @return
+     * @param checkString 所需判断字符串
+     * @return boolean
      */
     private static boolean isUnknown(String checkString){
         return isBlank(checkString) || "unknown".equalsIgnoreCase(checkString);
@@ -241,8 +241,8 @@ public class Tools {
 
     /**
      * 判断字符串是否为空
-     * @param cs
-     * @return
+     * @param cs 字符串
+     * @return boolean
      */
     public static boolean isBlank(CharSequence cs){
         int strLen;

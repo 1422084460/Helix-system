@@ -68,8 +68,8 @@ public class UserService {
 
     /**
      * 用户注册
-     * @param user
-     * @return
+     * @param user 用户
+     * @return int
      */
     @Transactional
     public int register(User user){
@@ -85,9 +85,9 @@ public class UserService {
 
     /**
      * 创建 token
-     * @param data
-     * @param payload_args
-     * @return
+     * @param data 请求数据
+     * @param payload_args 负载
+     * @return String
      */
     public String createToken(String data,String[] payload_args){
         Map map = JSON.parseObject(data);
@@ -100,8 +100,8 @@ public class UserService {
 
     /**
      * 用户登录
-     * @param data
-     * @return
+     * @param data 请求数据
+     * @return IResult
      */
     public IResult login(JSONObject data){
         QueryWrapper<User> wrapper = new QueryWrapper<>();
