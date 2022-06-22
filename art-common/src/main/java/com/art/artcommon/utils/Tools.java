@@ -138,7 +138,7 @@ public class Tools {
             html.setAuthentication(EmailConfig.getUserName(),EmailConfig.getPassword());
             html.setSubject(EmailConfig.getSubject());
             html.setMsg("验证码:<"+code+">");
-            RedisUtil.set("verifyCode",code,5, TimeUnit.MINUTES);
+            RedisUtil.setHash(receiver,"verifyCode",code,5, TimeUnit.MINUTES);
             html.send();
         } catch (Exception e) {
             e.printStackTrace();
