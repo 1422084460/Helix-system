@@ -95,8 +95,16 @@ public class IResult extends HashMap<String,Object> implements Serializable {
 
     /**
      * 请求接口成功
-     * @param data
-     * @return
+     * @return IResult
+     */
+    public static IResult success(){
+        return IResult.create().success().data(null).build();
+    }
+
+    /**
+     * 请求接口成功
+     * @param data 数据
+     * @return IResult
      */
     public static IResult success(JSONObject data){
         return IResult.create().success().data(data).build();
@@ -104,9 +112,9 @@ public class IResult extends HashMap<String,Object> implements Serializable {
 
     /**
      * 请求接口失败，默认返回9999
-     * @param data
-     * @param msg
-     * @return
+     * @param data 数据
+     * @param msg 信息
+     * @return IResult
      */
     public static IResult fail(JSONObject data,String msg){
         return IResult.create().fail().msg(msg).data(data).build();
@@ -114,9 +122,9 @@ public class IResult extends HashMap<String,Object> implements Serializable {
 
     /**
      * 请求接口失败，返回自定义错误信息
-     * @param data
-     * @param msg
-     * @return
+     * @param data 数据
+     * @param msg 信息
+     * @return IResult
      */
     public static IResult fail(JSONObject data,String msg,String code){
         return IResult.create().fail().code(code).msg(msg).data(data).build();
@@ -124,7 +132,7 @@ public class IResult extends HashMap<String,Object> implements Serializable {
 
     /**
      * 判断请求是否为成功
-     * @return
+     * @return boolean
      */
     public boolean isSuccess(){
         if (code == null){
@@ -135,7 +143,7 @@ public class IResult extends HashMap<String,Object> implements Serializable {
 
     /**
      * 判断请求是否为失败
-     * @return
+     * @return boolean
      */
     public boolean isFail(){
         return !isSuccess();
