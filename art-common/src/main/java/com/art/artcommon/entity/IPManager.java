@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 public class IPManager {
 
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
     @TableField
     private String ip;
     @TableField
