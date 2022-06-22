@@ -12,6 +12,7 @@ import com.art.artadmin.entity.User;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.service.UserService;
+import com.art.artweb.async.AsyncTaskMain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AsyncTaskMain task;
 
     /**
      * 用户登录
@@ -76,5 +80,54 @@ public class UserController {
             return IResult.success(object);
         }
         return IResult.fail(null,"注册失败", R.CODE_FAIL);
+    }
+
+    /**
+     * 进行密码修改
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/changePwd")
+    @ShowArgs
+    public IResult changePwd(@RequestBody JSONObject data){
+        String email = data.getString("email");
+        String newPwd = data.getString("newPassWord");
+        int i = userService.changePwd(email, newPwd);
+        if (i==1){
+            return IResult.success();
+        }
+        return IResult.fail(null,"密码修改失败，请重试",R.CODE_FAIL);
+    }
+
+    /**
+     * 发送验证码
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/sendCode")
+    @ShowArgs
+    public IResult sendCode(@RequestBody JSONObject data){
+        String receiver = data.getString("email");
+        task.asyncSendCode(receiver);
+        return IResult.success();
+    }
+
+    /**
+     * 验证验证码
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/verifyCode")
+    @ShowArgs
+    public IResult verifyCode(@RequestBody JSONObject data){
+        String code = data.getString("code");
+        String email = data.getString("email");
+        if (RedisUtil.hasHashKey(email,"verifyCode")){
+            if (RedisUtil.getHash(email,"verifyCode").equals(code)){
+                return IResult.success();
+            }
+            return IResult.fail(null,"验证码错误",R.CODE_VERIFY_FAIL);
+        }
+        return IResult.fail(null,"验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
     }
 }

@@ -8,6 +8,7 @@ import com.art.artadmin.entity.User;
 import com.art.artadmin.entity.User_log;
 import com.art.artadmin.mapper.UserMapper;
 import com.art.artcommon.utils.JWTUtils;
+import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.SpringContextHolder;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.handler.Handler;
@@ -123,5 +124,18 @@ public class UserService {
             return IResult.success(object);
         }
         return IResult.fail(null,"账号或密码错误!",R.CODE_FAIL);
+    }
+
+    /**
+     * 修改密码
+     * @param email 邮箱
+     * @param newPassWord 新密码
+     * @return int
+     */
+    @Transactional
+    public int changePwd(String email,String newPassWord){
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        wrapper.set("password",newPassWord).eq("email",email);
+        return userMapper.update(null, wrapper);
     }
 }

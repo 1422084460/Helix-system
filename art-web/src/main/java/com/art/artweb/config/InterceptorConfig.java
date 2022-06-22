@@ -1,6 +1,6 @@
 package com.art.artweb.config;
 
-import com.art.artweb.interceptor.JWTInterceptor;
+import com.art.artweb.interceptor.MasterInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +18,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         log.info("以{}环境启动...",mode);
         if (!mode.equals("debug")) {
-            registry.addInterceptor(new JWTInterceptor())
+            registry.addInterceptor(new MasterInterceptor())
                     .addPathPatterns("/api/**")
                     .excludePathPatterns("/api/user/register")
                     .excludePathPatterns("/api/user/sendCode")
                     .excludePathPatterns("/api/user/verifyCode");
         }else {
-            registry.addInterceptor(new JWTInterceptor())
+            registry.addInterceptor(new MasterInterceptor())
                     .addPathPatterns("/api/**")
                     .excludePathPatterns("/api/**");
         }

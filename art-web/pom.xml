@@ -24,7 +24,13 @@
     <dependencies>
         <dependency>
             <groupId>com.art</groupId>
-            <artifactId>art-service</artifactId>
+            <artifactId>art-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.art</groupId>
+            <artifactId>art-blog</artifactId>
             <version>1.0.0</version>
         </dependency>
 
