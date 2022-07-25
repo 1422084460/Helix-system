@@ -30,17 +30,20 @@ public class LoginCheckAspect {
         String prefix = "user_auth_";
         Object[] args = point.getArgs();
         JSONObject object = (JSONObject) args[0];
-        String suffix = object.getString("email");
-        String key = prefix + suffix;
-        if (RedisUtil.hasKey(key)){
-            RedisUtil.reFresh(key);
-        }else {
-            Object target = point.getTarget();
-            String methodName = point.getSignature().getName();
-            AuthL authL = AopTargetUtils.getTarget(target).getClass()
-                    .getDeclaredMethod(methodName, JSONObject.class)
-                    .getAnnotation(AuthL.class);
-            throw new CustomException(R.CODE_LOGIN_INVALID,authL.message());
+        boolean auth = object.getBooleanValue("is_admin");
+        if (!auth){
+            String suffix = object.getString("email");
+            String key = prefix + suffix;
+            if (RedisUtil.hasKey(key)){
+                RedisUtil.reFresh(key);
+            }else {
+                Object target = point.getTarget();
+                String methodName = point.getSignature().getName();
+                AuthL authL = AopTargetUtils.getTarget(target).getClass()
+                        .getDeclaredMethod(methodName, JSONObject.class)
+                        .getAnnotation(AuthL.class);
+                throw new CustomException(R.CODE_LOGIN_INVALID,authL.message());
+            }
         }
     }
 }
