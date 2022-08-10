@@ -12,7 +12,7 @@ public @interface CachedTable {
 
     String prefix() default "all_cache_task_";
     String key();
-    String moduleName();
+    String[] args() default {"*"};
     String tableName();
     long timeout() default 0;
     TimeUnit timeunit() default TimeUnit.SECONDS;

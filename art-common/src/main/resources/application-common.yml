@@ -4,6 +4,13 @@ spring:
     url: jdbc:mysql://118.31.55.121:3306/artsystem?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
     username: root
     password: GlassBottle*.
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 10
+      min-idle: 10
+      max-active: 20
+      max-wait: 60000
+      min-evictable-idle-time-millis: 300000
 
   redis:
     database: 0
