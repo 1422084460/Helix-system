@@ -52,22 +52,23 @@ public class AllCachedAspect {
         long timeout = cached.timeout();
         TimeUnit timeunit = cached.timeunit();
         String cache_key = prefix + key;
-        //String path = String.join(".","com","art","art"+moduleName,"entity",tableName);
-        String sql = null;
-        if (args.length==1 && args[0].equals("*")){
-            sql = String.format("select * from %s",tableName);
-        }else {
-            StringBuilder s = new StringBuilder();
-            for (int i=0;i<args.length;i++){
-                s.append(args[i]);
-                if (i != args.length-1){
-                    s.append(",");
+        if (!RedisUtil.hasKey(cache_key)){
+            String sql = null;
+            if (args.length==1 && args[0].equals("*")){
+                sql = String.format("select * from %s",tableName);
+            }else {
+                StringBuilder s = new StringBuilder();
+                for (int i=0;i<args.length;i++){
+                    s.append(args[i]);
+                    if (i != args.length-1){
+                        s.append(",");
+                    }
                 }
+                sql = String.format("select %s from %s",s,tableName);
             }
-            sql = String.format("select %s from %s",s,tableName);
+            String result = dbUtils.executeSql(sql);
+            RedisUtil.set(cache_key,result,timeout,timeunit);
+            log.info("缓存"+tableName+"表数据完成...");
         }
-        String result = dbUtils.executeSql(sql);
-        RedisUtil.set(cache_key,result,timeout,timeunit);
-        log.info("缓存"+tableName+"表数据完成...");
     }
 }
