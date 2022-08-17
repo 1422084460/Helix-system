@@ -13,6 +13,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 
@@ -33,8 +35,11 @@ public class AllCachedAspect {
     @Pointcut("@annotation(com.art.artcommon.custominterface.CachedTable)")
     public void cached(){}
 
+    //设定限流量
+    private volatile Semaphore semaphore = new Semaphore(10);
+
     /**
-     * 查询并缓存整个表数据
+     * 异步限流查询并缓存整个表数据
      * @param point 连接点
      * @throws Exception 异常
      */
@@ -52,23 +57,31 @@ public class AllCachedAspect {
         long timeout = cached.timeout();
         TimeUnit timeunit = cached.timeunit();
         String cache_key = prefix + key;
-        if (!RedisUtil.hasKey(cache_key)){
-            String sql = null;
-            if (args.length==1 && args[0].equals("*")){
-                sql = String.format("select * from %s",tableName);
-            }else {
-                StringBuilder s = new StringBuilder();
-                for (int i=0;i<args.length;i++){
-                    s.append(args[i]);
-                    if (i != args.length-1){
-                        s.append(",");
-                    }
-                }
-                sql = String.format("select %s from %s",s,tableName);
-            }
-            String result = dbUtils.executeSql(sql);
-            RedisUtil.set(cache_key,result,timeout,timeunit);
-            log.info("缓存"+tableName+"表数据完成...");
+        if (!RedisUtil.hasKey(cache_key)) {
+            whenExecuteCache(cache_key, args, tableName, timeout, timeunit);
         }
+    }
+
+    private void whenExecuteCache(String cache_key,String[] args,String tableName,long timeout,TimeUnit timeunit){
+        String sql = null;
+        if (args.length==1 && args[0].equals("*")){
+            sql = String.format("select * from %s",tableName);
+        }else {
+            StringBuilder s = new StringBuilder();
+            for (int i=0;i<args.length;i++){
+                s.append(args[i]);
+                if (i != args.length-1){
+                    s.append(",");
+                }
+            }
+            sql = String.format("select %s from %s",s,tableName);
+        }
+        String result = dbUtils.executeSql(sql);
+        RedisUtil.set(cache_key,result,timeout,timeunit);
+        log.info("缓存"+tableName+"表数据完成...");
+    }
+
+    private void limitAsyncAction(){
+        CompletableFuture.runAsync(()->{});
     }
 }
