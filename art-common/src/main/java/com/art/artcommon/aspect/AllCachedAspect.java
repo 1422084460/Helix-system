@@ -36,10 +36,10 @@ public class AllCachedAspect {
     public void cached(){}
 
     //设定限流量
-    private volatile Semaphore semaphore = new Semaphore(10);
+    private volatile Semaphore semaphore = new Semaphore(1);
 
     /**
-     * 异步限流查询并缓存整个表数据
+     * 限流查询并缓存整个表数据
      * @param point 连接点
      * @throws Exception 异常
      */
@@ -58,7 +58,21 @@ public class AllCachedAspect {
         TimeUnit timeunit = cached.timeunit();
         String cache_key = prefix + key;
         if (!RedisUtil.hasKey(cache_key)) {
-            whenExecuteCache(cache_key, args, tableName, timeout, timeunit);
+            while (true){
+                if (semaphore.tryAcquire()){
+                    if (RedisUtil.hasKey(cache_key)){
+                        semaphore.release();
+                        break;
+                    }
+                    whenExecuteCache(cache_key, args, tableName, timeout, timeunit);
+                    semaphore.release();
+                    break;
+                }else {
+                    if (RedisUtil.hasKey(cache_key)){
+                        break;
+                    }
+                }
+            }
         }
     }
 
