@@ -78,8 +78,10 @@ public class UserController {
             JSONObject object = new JSONObject();
             object.put("token",token);
             return IResult.success(object);
+        }else if (status==-1){
+            return IResult.fail(R.REGISTER_EMAIL_REPEAT, R.CODE_REGISTER_EMAIL_REPEAT);
         }
-        return IResult.fail(null,"注册失败", R.CODE_FAIL);
+        return IResult.fail("注册失败", R.CODE_FAIL);
     }
 
     /**
@@ -96,7 +98,7 @@ public class UserController {
         if (i==1){
             return IResult.success();
         }
-        return IResult.fail(null,"密码修改失败，请重试",R.CODE_FAIL);
+        return IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
 
     /**
@@ -126,8 +128,8 @@ public class UserController {
             if (RedisUtil.getHash(email,"verifyCode").equals(code)){
                 return IResult.success();
             }
-            return IResult.fail(null,"验证码错误",R.CODE_VERIFY_FAIL);
+            return IResult.fail("验证码错误",R.CODE_VERIFY_FAIL);
         }
-        return IResult.fail(null,"验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
+        return IResult.fail("验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
     }
 }

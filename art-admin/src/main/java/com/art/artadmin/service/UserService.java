@@ -75,11 +75,18 @@ public class UserService {
     @Transactional
     public int register(User user){
         int status = 0;
-        try {
-            user.setPassword(Tools.toMd5(user.getPassword()));
-            status = userMapper.insert(user);
-        }catch (Exception e){
-            System.out.println("status:"+status);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("email",user.getEmail());
+        User one = userMapper.selectOne(wrapper);
+        if (one==null){
+            try {
+                user.setPassword(Tools.toMd5(user.getPassword()));
+                status = userMapper.insert(user);
+            }catch (Exception e){
+                System.out.println("status:"+status);
+            }
+        }else {
+            status = -1;
         }
         return status;
     }
@@ -123,7 +130,7 @@ public class UserService {
             object.put("user",user);
             return IResult.success(object);
         }
-        return IResult.fail(null,"账号或密码错误!",R.CODE_FAIL);
+        return IResult.fail("账号或密码错误!",R.CODE_FAIL);
     }
 
     /**

@@ -121,13 +121,24 @@ public class IResult extends HashMap<String,Object> implements Serializable {
     }
 
     /**
-     * 请求接口失败，返回自定义错误信息
+     * 请求接口失败，返回自定义错误信息和data数据
      * @param data 数据
      * @param msg 信息
+     * @param code 信息码
      * @return IResult
      */
     public static IResult fail(JSONObject data,String msg,String code){
         return IResult.create().fail().code(code).msg(msg).data(data).build();
+    }
+
+    /**
+     * 请求接口失败，返回自定义错误信息
+     * @param msg 信息
+     * @param code 信息码
+     * @return IResult
+     */
+    public static IResult fail(String msg,String code){
+        return IResult.create().fail().data(null).code(code).msg(msg).build();
     }
 
     /**

@@ -73,5 +73,7 @@ public class R {
      * 用户相关
      */
     public static final String LOGIN_INVALID = "用户登录失效";
-    public static final String CODE_LOGIN_INVALID = "0013";
+    public static final String CODE_LOGIN_INVALID = "0103";
+    public static final String REGISTER_EMAIL_REPEAT = "用户当前邮箱已被注册";
+    public static final String CODE_REGISTER_EMAIL_REPEAT = "0104";
 }
