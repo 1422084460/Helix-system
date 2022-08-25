@@ -8,23 +8,17 @@ import com.art.artadmin.entity.User;
 import com.art.artadmin.entity.User_log;
 import com.art.artadmin.mapper.UserMapper;
 import com.art.artcommon.utils.JWTUtils;
-import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.SpringContextHolder;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.handler.Handler;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.StopWatch;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,38 +28,6 @@ public class UserService {
     private UserMapper userMapper;
 
     private Handler handler;
-
-    @Autowired
-    private TransactionTemplate transactionTemplate;
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<User> QueryUser(){
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.like("name","a");
-        List<User> users = userMapper.selectList(wrapper);
-        stopWatch.stop();
-        return users;
-    }
-
-    public void QueryUserTemplate(){
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
-        wrapper.like("name","a");
-        wrapper.set("name","abc");
-        //transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);//设置事务传播行为，默认为REQUIRED
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                userMapper.update(null,wrapper);
-                //int i=1/0;
-            }
-        });
-        stopWatch.stop();
-        System.out.println(stopWatch.getTotalTimeMillis());
-    }
 
     /**
      * 用户注册
