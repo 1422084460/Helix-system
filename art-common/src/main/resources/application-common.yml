@@ -53,7 +53,7 @@ send-email:
     hostName: smtp.qq.com
     charset: utf-8
     email: 1544096285@qq.com
-    name: Creator服务
+    name: 系统用户服务
     userName: 1544096285@qq.com
     password: rxgauhezhrysihjj
     subject: 验证码，5分钟内有效
