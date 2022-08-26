@@ -76,4 +76,8 @@ public class R {
     public static final String CODE_LOGIN_INVALID = "0103";
     public static final String REGISTER_EMAIL_REPEAT = "用户当前邮箱已被注册";
     public static final String CODE_REGISTER_EMAIL_REPEAT = "0104";
+    //以密码进行登录
+    public static final String CODE_LOGIN_WITH_PWD = "0200";
+    //以验证码进行登录
+    public static final String CODE_LOGIN_WITH_CODE = "0201";
 }

@@ -8,6 +8,7 @@ import com.art.artadmin.entity.User;
 import com.art.artadmin.entity.User_log;
 import com.art.artadmin.mapper.UserMapper;
 import com.art.artcommon.utils.JWTUtils;
+import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.SpringContextHolder;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.handler.Handler;
@@ -16,6 +17,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,5 +107,22 @@ public class UserService {
         UpdateWrapper<User> wrapper = new UpdateWrapper<>();
         wrapper.set("password",newPassWord).eq("email",email);
         return userMapper.update(null, wrapper);
+    }
+
+    /**
+     * 验证验证码
+     * @param data 请求数据
+     * @return IResult
+     */
+    public IResult verifyCode(JSONObject data){
+        String code = data.getString("code");
+        String email = data.getString("email");
+        if (RedisUtil.hasHashKey(email,"verifyCode")){
+            if (RedisUtil.getHash(email,"verifyCode").equals(code)){
+                return IResult.success();
+            }
+            return IResult.fail("验证码错误",R.CODE_VERIFY_FAIL);
+        }
+        return IResult.fail("验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
     }
 }

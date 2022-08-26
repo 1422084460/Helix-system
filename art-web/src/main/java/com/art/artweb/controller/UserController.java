@@ -31,7 +31,7 @@ public class UserController {
     private AsyncTaskMain task;
 
     /**
-     * 用户登录
+     * 用户登录 (密码或邮箱验证码)
      * @param data 请求数据
      * @return IResult
      */
@@ -39,7 +39,12 @@ public class UserController {
     @ShowArgs
     public IResult login(@RequestBody JSONObject data){
         String token = "";
-        IResult loginStatus = userService.login(data);
+        IResult loginStatus = null;
+        if (data.get("login_mode")==R.CODE_LOGIN_WITH_PWD){
+            loginStatus = userService.login(data);
+        }else {
+            loginStatus = userService.verifyCode(data);
+        }
         if (loginStatus.isSuccess()){
             IResult res = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
             RedisUtil.set("user_auth_" + data.getString("email"),"login",10, TimeUnit.SECONDS);
@@ -122,14 +127,6 @@ public class UserController {
     @RequestMapping("/verifyCode")
     @ShowArgs
     public IResult verifyCode(@RequestBody JSONObject data){
-        String code = data.getString("code");
-        String email = data.getString("email");
-        if (RedisUtil.hasHashKey(email,"verifyCode")){
-            if (RedisUtil.getHash(email,"verifyCode").equals(code)){
-                return IResult.success();
-            }
-            return IResult.fail("验证码错误",R.CODE_VERIFY_FAIL);
-        }
-        return IResult.fail("验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
+        return userService.verifyCode(data);
     }
 }
