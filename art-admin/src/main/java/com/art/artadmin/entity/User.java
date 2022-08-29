@@ -40,4 +40,6 @@ public class User {
     private String phone_num;
     @TableField
     private String create_time;
+    @TableField
+    private String role_key;
 }
