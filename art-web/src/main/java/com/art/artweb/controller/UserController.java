@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
+import com.art.artcommon.custominterface.AuthL;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.Store;
@@ -96,6 +97,7 @@ public class UserController {
      */
     @RequestMapping("/changePwd")
     @ShowArgs
+    @AuthL
     public IResult changePwd(@RequestBody JSONObject data){
         String email = data.getString("email");
         String newPwd = data.getString("newPassWord");
@@ -128,5 +130,15 @@ public class UserController {
     @ShowArgs
     public IResult verifyCode(@RequestBody JSONObject data){
         return userService.verifyCode(data);
+    }
+
+    /**
+     * 注销当前用户
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/cancelCurrentUser")
+    public IResult cancelCurrentUser(@RequestBody JSONObject data){
+        return userService.cancelCurrentUser(data);
     }
 }

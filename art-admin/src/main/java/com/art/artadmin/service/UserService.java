@@ -2,6 +2,9 @@ package com.art.artadmin.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.art.artadmin.entity.User_cancel;
+import com.art.artadmin.mapper.User_cancelMapper;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artadmin.entity.User;
@@ -17,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,8 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private User_cancelMapper cancelMapper;
 
     private Handler handler;
 
@@ -124,5 +128,27 @@ public class UserService {
             return IResult.fail("验证码错误",R.CODE_VERIFY_FAIL);
         }
         return IResult.fail("验证码已失效，请重新获取！",R.CODE_VERIFY_EXPIRE);
+    }
+
+    /**
+     * 注销当前用户
+     * @param data 请求数据
+     * @return IResult
+     */
+    @Transactional
+    public IResult cancelCurrentUser(JSONObject data){
+        String email = data.getString("email");
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("email",email);
+        User one = userMapper.selectOne(wrapper);
+        String userJson = JSON.toJSONString(one);
+        User_cancel cancel = JSON.parseObject(userJson,new TypeReference<User_cancel>(){});
+        cancel.setStatus("cancel");
+        int insert = cancelMapper.insert(cancel);
+        int delete = userMapper.delete(wrapper);
+        if (insert==1 && delete==1){
+            return IResult.success();
+        }
+        return IResult.fail("因未知错误注销失败，请稍后重试",R.CODE_FAIL);
     }
 }
