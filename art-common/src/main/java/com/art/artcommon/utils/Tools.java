@@ -112,7 +112,7 @@ public class Tools {
      * 随机生成6位验证码
      * @return String
      */
-    private static String getCode(){
+    public static String getCode(){
         String $ = "$%^_6";
         Date date = new Date();
         long time = date.getTime();
