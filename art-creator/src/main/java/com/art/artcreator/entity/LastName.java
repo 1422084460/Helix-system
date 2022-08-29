@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @NoArgsConstructor
-@TableName("Last_Name")
+@TableName("Story_Last_Name")
 @Accessors(chain = true)
 public class LastName {
 

@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @NoArgsConstructor
-@TableName("User_Log")
+@TableName("Admin_User_Log")
 @ToString
 @Accessors(chain = true)
 public class User_log {

@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @create 2022/6/15
  */
 @Data
-@TableName("IPM")
+@TableName("Admin_IPM")
 @Accessors(chain = true)
 public class IPManager {
 

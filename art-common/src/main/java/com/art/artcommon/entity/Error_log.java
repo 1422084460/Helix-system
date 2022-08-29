@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * @create 2022/3/24
  */
 @Data
-@TableName("Error_Log")
+@TableName("Helix_Error_Log")
 @Accessors(chain = true)
 public class Error_log {
 

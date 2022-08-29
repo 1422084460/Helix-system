@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 
 @Data
-@TableName("User")
+@TableName("Admin_User")
 @NoArgsConstructor
 @Accessors(chain = true)
 public class User {
