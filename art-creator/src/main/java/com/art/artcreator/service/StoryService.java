@@ -1,6 +1,7 @@
 package com.art.artcreator.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
@@ -8,11 +9,13 @@ import com.art.artcreator.entity.NamePackage;
 import com.art.artcreator.mapper.ChapterMapper;
 import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
+import com.art.artcreator.mapper.NovelChapterListMapper;
 import com.art.artcreator.mongo.NameAdopted;
 import com.art.artcommon.utils.MongoUtils;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.art.artcreator.novel.Chapter;
+import com.art.artcreator.novel.NovelChapterList;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -36,6 +38,8 @@ public class StoryService {
     private LastNameMapper last;
     @Autowired
     private ChapterMapper chapterMapper;
+    @Autowired
+    private NovelChapterListMapper novelChapterListMapper;
 
     private static final String FULL_CLASS_NAME = "com.art.artcreator.mongo.NameAdopted";
 
@@ -284,5 +288,21 @@ public class StoryService {
             RedisUtil.set(email,JSON.toJSONString(chapter),24,TimeUnit.HOURS);
         }
         return stat;
+    }
+
+    /**
+     * 获取指定章节内容
+     * @param email 邮箱
+     * @param novelName 作品名
+     * @param target 目标
+     * @return JSONObject
+     */
+    public JSONObject showOneChapter(String email,String novelName,int target){
+        QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+        wrapper.eq("b.email",email)
+                .eq("b.novel_name",novelName)
+                .eq("b.para_current",target)
+                .apply("a.chapter_id = b.chapter_id");
+        return chapterMapper.queryOneChapter(wrapper);
     }
 }

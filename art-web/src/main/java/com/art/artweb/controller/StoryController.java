@@ -87,4 +87,30 @@ public class StoryController {
         }
         return IResult.fail("创建失败",R.CODE_FAIL);
     }
+
+    /**
+     * 获取指定章节内容
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/showOneChapter")
+    public IResult showOneChapter(@RequestBody JSONObject data){
+        int target = data.getIntValue("chapterNum");
+        String email = data.getString("email");
+        String novelName = data.getString("novelName");
+        JSONObject chapter = storyService.showOneChapter(email,novelName,target);
+        JSONObject object = new JSONObject();
+        object.put("chapter",chapter);
+        return IResult.success(object);
+    }
+
+    /**
+     * 获取所有章节
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/showAllChapters")
+    public IResult showAllChapters(@RequestBody JSONObject data){
+        return IResult.success();
+    }
 }
