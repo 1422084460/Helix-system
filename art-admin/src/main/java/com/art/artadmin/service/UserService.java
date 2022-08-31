@@ -144,6 +144,8 @@ public class UserService {
         String userJson = JSON.toJSONString(one);
         User_cancel cancel = JSON.parseObject(userJson,new TypeReference<User_cancel>(){});
         cancel.setStatus("cancel");
+        String cancel_time = Tools.date_To_Str(data.getLong("timestamp"));
+        cancel.setCancel_time(cancel_time);
         int insert = cancelMapper.insert(cancel);
         int delete = userMapper.delete(wrapper);
         if (insert==1 && delete==1){
