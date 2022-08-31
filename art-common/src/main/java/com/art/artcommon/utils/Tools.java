@@ -255,4 +255,17 @@ public class Tools {
         }
         return true;
     }
+
+    /**
+     * 统计文章字数
+     * @param paras 段落集合
+     * @return int
+     */
+    public static int countParas(List<String> paras){
+        int count = 0;
+        for (String para : paras){
+            count += para.length();
+        }
+        return count;
+    }
 }

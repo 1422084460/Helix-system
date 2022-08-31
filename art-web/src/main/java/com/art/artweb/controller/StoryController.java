@@ -1,6 +1,8 @@
 package com.art.artweb.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
@@ -65,5 +67,24 @@ public class StoryController {
         }catch (Exception e){
             return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
         }
+    }
+
+    /**
+     * 创建新章节
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/createChapter")
+    public IResult createChapter(@RequestBody JSONObject data){
+        Long timestamp = data.getLong("timestamp");
+        String email = data.getString("email");
+        String chapterName = data.getString("chapterName");
+        String des = data.getString("details");
+        List<String> details = JSON.parseObject(des,new TypeReference<List<String>>(){});
+        int res = storyService.createChapter(chapterName,details,email,timestamp);
+        if (res==1){
+            return IResult.success();
+        }
+        return IResult.fail("创建失败",R.CODE_FAIL);
     }
 }

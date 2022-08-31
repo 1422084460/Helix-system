@@ -5,19 +5,23 @@ import com.alibaba.fastjson.TypeReference;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
 import com.art.artcreator.entity.NamePackage;
+import com.art.artcreator.mapper.ChapterMapper;
 import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
 import com.art.artcreator.mongo.NameAdopted;
 import com.art.artcommon.utils.MongoUtils;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
+import com.art.artcreator.novel.Chapter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -30,6 +34,8 @@ public class StoryService {
     private FirstNameMapper first;
     @Autowired
     private LastNameMapper last;
+    @Autowired
+    private ChapterMapper chapterMapper;
 
     private static final String FULL_CLASS_NAME = "com.art.artcreator.mongo.NameAdopted";
 
@@ -246,5 +252,37 @@ public class StoryService {
         Class<?>[] c = {email.getClass()};
         Object[] o = {email};
         MongoUtils.saveOne(FULL_CLASS_NAME,f,c,o);
+    }
+
+    /**
+     * 创建新章节
+     * @param chapterName 章节名
+     * @param details 段落详细内容
+     * @return int
+     */
+    @Transactional
+    public int createChapter(String chapterName,List<String> details,String email,long timestamp){
+        String createTime = Tools.date_To_Str(timestamp);
+        String chapter_id = Tools.getCode() + timestamp;
+        List<Chapter.ChapterPara> list = new ArrayList<>();
+        for (String de : details){
+            Chapter.ChapterPara para = new Chapter().generatePara(de);
+            list.add(para);
+        }
+        int count = Tools.countParas(details);
+        Chapter chapter = new Chapter()
+                .setEmail(email)
+                .setChapter_id(chapter_id)
+                .setChapterName(chapterName)
+                .setDetail(list)
+                .setCount(count)
+                .setCreate_time(createTime);
+        int stat = 0;
+        try {
+            stat = chapterMapper.insert(chapter);
+        }catch (Exception e){
+            RedisUtil.set(email,JSON.toJSONString(chapter),24,TimeUnit.HOURS);
+        }
+        return stat;
     }
 }
