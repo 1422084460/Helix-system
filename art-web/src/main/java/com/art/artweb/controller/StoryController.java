@@ -76,13 +76,8 @@ public class StoryController {
      */
     @RequestMapping("/createChapter")
     public IResult createChapter(@RequestBody JSONObject data){
-        Long timestamp = data.getLong("timestamp");
-        String email = data.getString("email");
-        String chapterName = data.getString("chapterName");
-        String des = data.getString("details");
-        List<String> details = JSON.parseObject(des,new TypeReference<List<String>>(){});
-        int res = storyService.createChapter(chapterName,details,email,timestamp);
-        if (res==1){
+        boolean res = storyService.createChapter(data);
+        if (res){
             return IResult.success();
         }
         return IResult.fail("创建失败",R.CODE_FAIL);

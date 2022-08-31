@@ -17,6 +17,7 @@ import com.art.artcommon.utils.Tools;
 import com.art.artcreator.novel.Chapter;
 import com.art.artcreator.novel.NovelChapterList;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -260,12 +261,19 @@ public class StoryService {
 
     /**
      * 创建新章节
-     * @param chapterName 章节名
-     * @param details 段落详细内容
+     * @param data 请求数据
      * @return int
      */
     @Transactional
-    public int createChapter(String chapterName,List<String> details,String email,long timestamp){
+    public boolean createChapter(JSONObject data){
+        Long timestamp = data.getLong("timestamp");
+        String email = data.getString("email");
+        String authorName = data.getString("authorName");
+        String novelName = data.getString("novelName");
+        int paraCurrent = data.getIntValue("paraCurrent");
+        String chapterName = data.getString("chapterName");
+        String des = data.getString("details");
+        List<String> details = JSON.parseObject(des,new TypeReference<List<String>>(){});
         String createTime = Tools.date_To_Str(timestamp);
         String chapter_id = Tools.getCode() + timestamp;
         List<Chapter.ChapterPara> list = new ArrayList<>();
@@ -281,13 +289,36 @@ public class StoryService {
                 .setDetail(list)
                 .setCount(count)
                 .setCreate_time(createTime);
-        int stat = 0;
+        NovelChapterList chapterList = new NovelChapterList()
+                .setEmail(email)
+                .setAuthor_name(authorName)
+                .setNovel_name(novelName)
+                .setChapter_id(chapter_id)
+                .setParas_count(paraCurrent)
+                .setPara_current(paraCurrent);
+        int stat1 = 0;
+        int stat2 = 0;
         try {
-            stat = chapterMapper.insert(chapter);
+            stat1 = chapterMapper.insert(chapter);
+            stat2 = novelChapterListMapper.insert(chapterList);
+            if (stat2 == 1){
+                UpdateWrapper<NovelChapterList> wrapper = new UpdateWrapper<>();
+                wrapper.set("paras_count",paraCurrent)
+                        .eq("email",email)
+                        .eq("novel_name",novelName);
+                novelChapterListMapper.update(null,wrapper);
+            }
         }catch (Exception e){
-            RedisUtil.set(email,JSON.toJSONString(chapter),24,TimeUnit.HOURS);
+            RedisUtil.set(email+"_"+novelName+"_"+paraCurrent,
+                    JSON.toJSONString(chapter),
+                    24,
+                    TimeUnit.HOURS);
+            RedisUtil.set(email+"_"+novelName+"_"+paraCurrent+"list",
+                    JSON.toJSONString(chapterList),
+                    24,
+                    TimeUnit.HOURS);
         }
-        return stat;
+        return (stat1==stat2 && stat1==1);
     }
 
     /**
