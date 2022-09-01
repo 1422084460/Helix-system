@@ -80,4 +80,11 @@ public class R {
     public static final String CODE_LOGIN_WITH_PWD = "0200";
     //以验证码进行登录
     public static final String CODE_LOGIN_WITH_CODE = "0201";
+
+    /**
+     * 发布相关
+     */
+    public static final String STATUS_PUB = "published";
+    public static final String STATUS_PRE = "prepared";
+    public static final String STATUS_EXA = "examine_failed";
 }

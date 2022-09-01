@@ -3,6 +3,8 @@ package com.art.artcreator.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.art.artcommon.constant.R;
+import com.art.artcommon.entity.IResult;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
 import com.art.artcreator.entity.NamePackage;
@@ -260,7 +262,7 @@ public class StoryService {
     }
 
     /**
-     * 创建新章节
+     * 创建新章节 (预发布)
      * @param data 请求数据
      * @return int
      */
@@ -288,7 +290,8 @@ public class StoryService {
                 .setChapterName(chapterName)
                 .setDetail(list)
                 .setCount(count)
-                .setCreate_time(createTime);
+                .setCreate_time(createTime)
+                .setStatus(R.STATUS_PRE);
         NovelChapterList chapterList = new NovelChapterList()
                 .setEmail(email)
                 .setAuthor_name(authorName)
@@ -335,5 +338,61 @@ public class StoryService {
                 .eq("b.para_current",target)
                 .apply("a.chapter_id = b.chapter_id");
         return chapterMapper.queryOneChapter(wrapper);
+    }
+
+    /**
+     * 获取所有章节目录
+     * @param email 邮箱
+     * @param novelName 作品名
+     * @return List<String>
+     */
+    public List<String> showAllChapters(String email,String novelName){
+        List<String> stringList = null;
+        if (!RedisUtil.hasKey(email+"_"+novelName+"_cL")) {
+            QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+            wrapper.eq("b.email",email)
+                    .eq("b.novel_name",novelName)
+                    .eq("a.status",R.STATUS_PUB)
+                    .apply("a.chapter_id = b.chapter_id")
+                    .orderByAsc("b.para_current");
+            List<JSONObject> list = chapterMapper.queryChapters(wrapper);
+            stringList = Tools.convertChapters(list);
+            RedisUtil.set(email+"_"+novelName+"_cL",JSON.toJSONString(stringList),24,TimeUnit.HOURS);
+        }else {
+            String s = RedisUtil.get(email + "_" + novelName + "_cL");
+            stringList = JSON.parseObject(s,new TypeReference<List<String>>(){});
+        }
+        return stringList;
+    }
+
+    /**
+     * 发布并审核章节
+     * @param data 请求数据
+     * @return boolean
+     */
+    public boolean checkPublishChapter(JSONObject data){
+        String is_admin = data.getString("is_admin");
+        String chapter_id = data.getString("chapter_id");
+        boolean flag = is_admin.equals("1");
+        //管理员手动审核
+        if (flag){
+            UpdateWrapper<Chapter> wrapper = new UpdateWrapper<>();
+            wrapper.set("status",R.STATUS_PUB)
+                    .eq("chapter_id",chapter_id)
+                    .eq("status",R.STATUS_EXA);
+            int update = chapterMapper.update(null, wrapper);
+            return update==1;
+        }
+        //非管理员自动审核
+        QueryWrapper<Chapter> wrapper = new QueryWrapper<>();
+        wrapper.eq("chapter_id",chapter_id)
+                .eq("status",R.STATUS_EXA);
+        Chapter chapter = chapterMapper.selectOne(wrapper);
+        List<Chapter.ChapterPara> detail = chapter.getDetail();
+        List<String> list = new ArrayList<>();
+        for (Chapter.ChapterPara c : detail){
+            list.add(c.getPara());
+        }
+        return Tools.checkIfChapterLegal(list);
     }
 }

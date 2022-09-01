@@ -111,6 +111,16 @@ public class IResult extends HashMap<String,Object> implements Serializable {
     }
 
     /**
+     * 请求接口成功并返回自定义信息
+     * @param msg 信息
+     * @param data 数据
+     * @return IResult
+     */
+    public static IResult success(String msg,JSONObject data){
+        return IResult.create().success().msg(msg).data(data).build();
+    }
+
+    /**
      * 请求接口失败，默认返回9999
      * @param data 数据
      * @param msg 信息

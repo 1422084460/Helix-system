@@ -1,5 +1,7 @@
 package com.art.artcommon.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.config.EmailConfig;
 import com.art.artcommon.custominterface.AuthL;
 import org.apache.commons.mail.HtmlEmail;
@@ -267,5 +269,45 @@ public class Tools {
             count += para.length();
         }
         return count;
+    }
+
+    /**
+     * 转换章节目录显示
+     * @param list 章节集合
+     * @return List<String>
+     */
+    public static List<String> convertChapters(List<JSONObject> list){
+        List<String> cL = new ArrayList<>();
+        for (JSONObject o : list){
+            int paraCurrent = o.getIntValue("para_current");
+            String chapterName = o.getString("chapterName");
+            String s = String.format("第%s章: %s", paraCurrent,chapterName);
+            cL.add(s);
+        }
+        return cL;
+    }
+
+    /**
+     * 审核待发布章节是否合法
+     * @param detail 章节集合
+     * @return boolean
+     */
+    public static boolean checkIfChapterLegal(List<String> detail){
+        String target = JSON.toJSONString(detail);
+        int count = countParas(detail);
+        if (count<500){
+            return false;
+        }
+        String illegalWordList = RedisUtil.get("Illegal_word_list");
+        String[] arr = illegalWordList
+                .replace("[","")
+                .replace("]","")
+                .split(",");
+        for (String a : arr){
+            if (target.contains(a)){
+                return false;
+            }
+        }
+        return true;
     }
 }

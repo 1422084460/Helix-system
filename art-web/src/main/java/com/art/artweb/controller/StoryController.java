@@ -1,8 +1,6 @@
 package com.art.artweb.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
@@ -84,6 +82,20 @@ public class StoryController {
     }
 
     /**
+     * 发布并审核章节
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/checkChapter")
+    public IResult checkPublishChapter(@RequestBody JSONObject data){
+        boolean flag = storyService.checkPublishChapter(data);
+        if (flag){
+            IResult.success("审核通过",null);
+        }
+        return IResult.fail("审核不通过，请联系管理员或自行修改发布内容",null);
+    }
+
+    /**
      * 获取指定章节内容
      * @param data 请求数据
      * @return IResult
@@ -100,12 +112,17 @@ public class StoryController {
     }
 
     /**
-     * 获取所有章节
+     * 获取所有章节目录
      * @param data 请求数据
      * @return IResult
      */
     @RequestMapping("/showAllChapters")
     public IResult showAllChapters(@RequestBody JSONObject data){
-        return IResult.success();
+        String email = data.getString("email");
+        String novelName = data.getString("novelName");
+        List<String> result = storyService.showAllChapters(email, novelName);
+        JSONObject object = new JSONObject();
+        object.put("chapters",result);
+        return IResult.success(object);
     }
 }

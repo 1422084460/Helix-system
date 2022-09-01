@@ -35,6 +35,8 @@ public class Chapter {
     private Integer count;
     @TableField
     private String create_time;
+    @TableField
+    private String status;
 
     @Data
     public class ChapterPara {

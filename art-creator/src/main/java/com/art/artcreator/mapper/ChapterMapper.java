@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * description
  *
@@ -31,4 +33,13 @@ public interface ChapterMapper extends BaseMapper<Chapter> {
             "Story_NovelChapterList b" +
             " ${ew.customSqlSegment}")
     JSONObject queryOneChapter(@Param("ew") Wrapper wrapper);
+
+    @Select("select " +
+            "a.chapterName," +
+            "b.para_current " +
+            "from " +
+            "Story_NovelChapter a," +
+            "Story_NovelChapterList b" +
+            " ${ew.customSqlSegment}")
+    List<JSONObject> queryChapters(@Param("ew") Wrapper wrapper);
 }
