@@ -142,13 +142,13 @@ public class StoryController {
     }
 
     /**
-     * 界面展示所有内容
+     * 界面展示指定内容
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/showAllNovels")
-    public IResult showAllNovels(@RequestBody JSONObject data){
-        JSONObject result = storyService.showAllNovels(data);
+    @RequestMapping("/queryNovels")
+    public IResult queryNovels(@RequestBody JSONObject data){
+        JSONObject result = storyService.queryNovels(data);
         return IResult.success(result);
     }
 }

@@ -408,22 +408,24 @@ public class StoryService {
     }
 
     /**
-     * 界面展示所有内容
+     * 界面展示指定内容
      * @param data 请求数据
      * @return JSONObject
      */
-    public JSONObject showAllNovels(JSONObject data){
+    public JSONObject queryNovels(JSONObject data){
         String type = data.getString("novelType");
+        String fuzzy = data.getString("fuzzyWord");
         QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
         if (type.equals("0")){
             wrapper.ne("novelType",type);
         }else {
             wrapper.eq("novelType",type);
         }
+        wrapper.like(!fuzzy.equals(""),"novel_name",fuzzy);
         wrapper.groupBy("novel_name");
         List<JSONObject> chapterLists = novelChapterListMapper.queryUniqueChaptersForShow(wrapper);
         JSONObject o = new JSONObject();
-        o.put("AllNovels",chapterLists);
+        o.put("NovelsResult",chapterLists);
         return o;
     }
 }
