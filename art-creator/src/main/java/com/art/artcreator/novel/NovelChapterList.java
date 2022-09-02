@@ -30,9 +30,17 @@ public class NovelChapterList {
     @TableField
     private String novel_name;
     @TableField
+    private String novel_type;
+    @TableField
+    private String novel_score;
+    @TableField
+    private String introduction;
+    @TableField
     private String chapter_id;
     @TableField
     private Integer paras_count;
     @TableField
     private Integer para_current;
+    @TableField
+    private String cover;
 }

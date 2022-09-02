@@ -70,10 +70,7 @@ public class UserController {
     @RequestMapping("/register")
     @ShowArgs
     public IResult register(@RequestBody JSONObject data){
-        data.remove("confirm_pwd");
-        data.remove("code");
         String date = Tools.date_To_Str((Long) data.get("timestamp"));
-        data.remove("timestamp");
         data.put("create_time",date);
         String s = data.toJSONString();
         User user = JSON.parseObject(s,new TypeReference<User>(){});

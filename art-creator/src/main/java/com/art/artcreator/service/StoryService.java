@@ -395,4 +395,15 @@ public class StoryService {
         }
         return Tools.checkIfChapterLegal(list);
     }
+
+    /**
+     * 创建新内容
+     * @param data 请求数据
+     * @return int
+     */
+    public int createNovel(JSONObject data){
+        String s = data.toJSONString();
+        NovelChapterList entity = JSON.parseObject(s, new TypeReference<NovelChapterList>(){});
+        return novelChapterListMapper.insert(entity);
+    }
 }

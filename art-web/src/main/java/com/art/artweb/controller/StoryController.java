@@ -125,4 +125,19 @@ public class StoryController {
         object.put("chapters",result);
         return IResult.success(object);
     }
+
+    /**
+     * 创建新内容
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/createNovel")
+    @ShowArgs
+    public IResult createNovel(@RequestBody JSONObject data){
+        int stat = storyService.createNovel(data);
+        if (stat==1){
+            return IResult.success("创建成功",null);
+        }
+        return IResult.fail("创建失败，请稍后重试",null);
+    }
 }
