@@ -406,4 +406,24 @@ public class StoryService {
         NovelChapterList entity = JSON.parseObject(s, new TypeReference<NovelChapterList>(){});
         return novelChapterListMapper.insert(entity);
     }
+
+    /**
+     * 界面展示所有内容
+     * @param data 请求数据
+     * @return JSONObject
+     */
+    public JSONObject showAllNovels(JSONObject data){
+        String type = data.getString("novelType");
+        QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+        if (type.equals("0")){
+            wrapper.ne("novelType",type);
+        }else {
+            wrapper.eq("novelType",type);
+        }
+        wrapper.groupBy("novel_name");
+        List<JSONObject> chapterLists = novelChapterListMapper.queryUniqueChaptersForShow(wrapper);
+        JSONObject o = new JSONObject();
+        o.put("AllNovels",chapterLists);
+        return o;
+    }
 }

@@ -140,4 +140,15 @@ public class StoryController {
         }
         return IResult.fail("创建失败，请稍后重试",null);
     }
+
+    /**
+     * 界面展示所有内容
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/showAllNovels")
+    public IResult showAllNovels(@RequestBody JSONObject data){
+        JSONObject result = storyService.showAllNovels(data);
+        return IResult.success(result);
+    }
 }
