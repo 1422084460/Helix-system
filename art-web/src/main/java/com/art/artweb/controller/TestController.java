@@ -42,7 +42,7 @@ public class TestController {
 
     @RequestMapping("/token")
     public String verityTokenTest(){
-        System.out.println("测试进来了");
+        System.out.println("测试进来了...");
         //DecodedJWT verify = JWTUtils.verify("");
         //System.out.println(verify.getClaim("email").asString());
         //System.out.println(Store.getInstance().get(Thread.currentThread().getName()).get("token验证"));
