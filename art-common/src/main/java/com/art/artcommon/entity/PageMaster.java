@@ -2,6 +2,7 @@ package com.art.artcommon.entity;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class PageMaster extends JSONObject {
     /**
      * 物理页面组
      */
-    public JSONObject pages = new JSONObject();
+    public List pages = new ArrayList();
 
     /**
      * 获取总页数
@@ -61,17 +62,18 @@ public class PageMaster extends JSONObject {
      * @param targetList 目标集合
      * @param pageSize 每页计数
      */
-    private PageMaster(List<JSONObject> targetList, int pageSize){
+    private PageMaster(List<Object> targetList, int pageSize){
         this.pageSize = pageSize;
         int targetCount = targetList.size();
         this.count = computePages(targetCount,pageSize);
         this.currentPage = 1;
         if (count==1){
-            pages.put("1",targetList);
+            pages.add(targetList);
         }else {
             cutPages(targetList);
         }
         put("pages",pages);
+        put("size",targetList.size());
     }
 
     /**
@@ -92,17 +94,17 @@ public class PageMaster extends JSONObject {
      * 拆分页面
      * @param targetList 目标集合
      */
-    private void cutPages(List<JSONObject> targetList){
+    private void cutPages(List<Object> targetList){
         int sum = count;
         int start = 0;
         for (int i=1;i<=sum;i++){
-            List<JSONObject> sub;
+            List<Object> sub;
             if ((targetList.size()-(i-1)*pageSize)>pageSize){
                 sub = targetList.subList(start, start + pageSize);
             }else {
                 sub = targetList.subList(start, targetList.size());
             }
-            pages.put(""+i,sub);
+            pages.add(sub);
             start += pageSize;
         }
     }
@@ -113,7 +115,7 @@ public class PageMaster extends JSONObject {
      * @param pageSize 每页计数
      * @return PageMaster
      */
-    public static PageMaster create(List<JSONObject> targetList,int pageSize){
+    public static PageMaster create(List<Object> targetList,int pageSize){
         return new PageMaster(targetList,pageSize);
     }
 
@@ -122,7 +124,7 @@ public class PageMaster extends JSONObject {
      * @param targetList 目标集合
      * @return PageMaster
      */
-    public static PageMaster create(List<JSONObject> targetList){
+    public static PageMaster create(List<Object> targetList){
         return new PageMaster(targetList,10);
     }
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
+import com.art.artcommon.entity.PageMaster;
 import com.art.artcreator.entity.NamePackage;
 import com.art.artcreator.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -35,14 +37,12 @@ public class StoryController {
                     data.getIntValue("first_has_num"),
                     data.getIntValue("last_has_num"),
                     data.getBooleanValue("has_inner_name"));
-            JSONObject object = new JSONObject();
-            List<NamePackage> packages = storyService.doPackage(name,
+            List packages = storyService.doPackage(name,
                     data.getString("style"),
                     data.getString("category"),
                     data.getString("area"));
-            object.put("nameList",packages);
-            object.put("listSize",name.size());
-            return IResult.success(object);
+            PageMaster res = PageMaster.create(packages,2);
+            return IResult.success(res);
         } catch (Exception e) {
             return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
         }
