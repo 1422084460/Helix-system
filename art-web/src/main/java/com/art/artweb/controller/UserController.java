@@ -41,7 +41,7 @@ public class UserController {
     public IResult login(@RequestBody JSONObject data){
         String token = "";
         IResult loginStatus = null;
-        if (data.get("login_mode")==R.CODE_LOGIN_WITH_PWD){
+        if (data.get("login_mode").equals(R.CODE_LOGIN_WITH_PWD)){
             loginStatus = userService.login(data);
         }else {
             loginStatus = userService.verifyCode(data);
