@@ -33,9 +33,13 @@ public class User {
     @TableField
     private String status;
     @TableField
-    private String is_admin;
-    @TableField
     private int score;
+    @TableField
+    private int sign_in_status;
+    @TableField
+    private int last_sign_in;
+    @TableField
+    private int sign_in_count;
     @TableField
     private String phone_num;
     @TableField

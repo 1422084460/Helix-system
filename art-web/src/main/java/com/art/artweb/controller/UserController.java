@@ -138,4 +138,22 @@ public class UserController {
     public IResult cancelCurrentUser(@RequestBody JSONObject data){
         return userService.cancelCurrentUser(data);
     }
+
+    /**
+     * 用户签到
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/signIn")
+    public IResult signIn(@RequestBody JSONObject data){
+        String email = data.getString("email");
+        long timestamp = data.getLong("timestamp");
+        int score = data.getIntValue("score");
+        int signInCount = data.getIntValue("signInCount");
+        int signIn = userService.signIn(email,timestamp,score,signInCount);
+        if (signIn==1){
+            return IResult.success();
+        }
+        return IResult.fail("签到失败",R.CODE_FAIL);
+    }
 }

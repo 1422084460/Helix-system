@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService {
@@ -152,5 +153,37 @@ public class UserService {
             return IResult.success();
         }
         return IResult.fail("因未知错误注销失败，请稍后重试",R.CODE_FAIL);
+    }
+
+    /**
+     * 用户签到
+     * @param email 邮箱
+     * @return int
+     */
+    @Transactional
+    public int signIn(String email,long timestamp,int score,int signInCount){
+        int update = 0;
+        long timeoutToday = Tools.computeTimeToMN(0);
+        long timeoutTomorrow = Tools.computeTimeToMN(1);
+        if (RedisUtil.hasKey("ifSignInAlready-"+email)){
+            return update;
+        }
+        boolean flag = Tools.ifSignInContinue(email);
+        try {
+            RedisUtil.set("ifSignInAlready-"+email,"true",timeoutToday,TimeUnit.SECONDS);
+            RedisUtil.set("ifSignInContinue-"+email,"true",timeoutTomorrow,TimeUnit.SECONDS);
+            UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+            wrapper.set("sign_in_status",1)
+                    .set("last_sign_in",timestamp)
+                    .set(flag,"score",score+Tools.computeScore(signInCount))
+                    .set(!flag,"score",score+Tools.computeScore(0))
+                    .set(flag,"sign_in_count",signInCount+1)
+                    .set(!flag,"sign_in_count",1)
+                    .eq("email",email);
+            update = userMapper.update(null, wrapper);
+        }catch (Exception e){
+            return 0;
+        }
+        return update;
     }
 }

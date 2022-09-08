@@ -310,4 +310,53 @@ public class Tools {
         }
         return true;
     }
+
+    /**
+     * 计算至00:00的时间差秒数
+     * @param day 延迟天数，0表示当天
+     * @return long
+     */
+    public static long computeTimeToMN(int day){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR,1);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        long res = (calendar.getTimeInMillis()-System.currentTimeMillis()) / 1000;
+        return res + day*86400;
+    }
+
+    /**
+     * 判断是否处于连续签到状态
+     * @param email
+     */
+    public static boolean ifSignInContinue(String email){
+        if (RedisUtil.hasKey("ifSignInContinue-"+email)){
+            RedisUtil.set("ifSignInContinue-"+email,"true",computeTimeToMN(1),TimeUnit.SECONDS);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 根据签到次数计算获得积分
+     * @param signInCount 累计签到次数
+     * @return int
+     */
+    public static int computeScore(int signInCount){
+        switch (signInCount){
+            case 0:
+                return 1;
+            case 1:
+                return 2;
+            case 2:
+                return 3;
+            case 3:
+                return 4;
+            case 4:
+                return 5;
+        }
+        return 5;
+    }
 }
