@@ -186,4 +186,24 @@ public class UserService {
         }
         return update;
     }
+
+    /**
+     * 获取用户个人中心页面
+     * @param email 邮箱
+     * @return JSONObject
+     */
+    public JSONObject getUserPageInfo(String email){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("email",email);
+        User user = userMapper.selectOne(wrapper);
+        JSONObject result = new JSONObject();
+        result.put("email",user.getEmail());
+        result.put("username",user.getUsername());
+        result.put("avatar",user.getAvatar());
+        result.put("score",user.getScore());
+        result.put("signInStatus",user.getSign_in_status());
+        result.put("signInCount",user.getSign_in_count());
+        result.put("roleKey",user.getRole_key());
+        return result;
+    }
 }

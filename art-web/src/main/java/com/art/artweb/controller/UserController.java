@@ -156,4 +156,16 @@ public class UserController {
         }
         return IResult.fail("签到失败",R.CODE_FAIL);
     }
+
+    /**
+     * 获取用户个人中心页面
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/getUserPageInfo")
+    public IResult getUserPageInfo(@RequestBody JSONObject data){
+        String email = data.getString("email");
+        JSONObject userPageInfo = userService.getUserPageInfo(email);
+        return IResult.success(userPageInfo);
+    }
 }
