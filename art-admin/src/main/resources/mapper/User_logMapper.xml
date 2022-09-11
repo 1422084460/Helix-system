@@ -6,7 +6,7 @@
 <mapper namespace="com.art.artadmin.mapper.User_logMapper">
 
     <insert id="insertBatch" parameterType="java.util.List">
-        INSERT INTO User_Log(username,email,login_time,event) values
+        INSERT INTO Admin_User_Log(username,email,login_time,event) values
         <foreach collection="list" item="item" separator="," close=";">
             (#{item.username},#{item.email},#{item.login_time},#{item.event})
         </foreach>
