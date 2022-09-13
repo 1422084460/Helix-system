@@ -17,6 +17,12 @@ spring:
     host: 118.31.55.121
     port: 6379
     password: Happy
+    lettuce:
+      pool:
+        max-active: 100
+        max-idle: 8
+        min-idle: 1
+    timeout: PT10S #这里10秒查不到数据就超时
 
   data:
     mongodb:
