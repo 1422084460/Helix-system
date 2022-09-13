@@ -64,5 +64,13 @@ send-email:
     password: rxgauhezhrysihjj
     subject: 验证码，5分钟内有效
 
+upload-file:
+  data:
+    port: 22
+    password: HAPPY142208*.
+    ip: 118.31.55.121
+    user: root
+    filepath: /usr/local/images/
+
 python:
   url: 127.0.0.1:9000

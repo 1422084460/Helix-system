@@ -5,19 +5,33 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
 
 @Slf4j
+@Component
 public class FileUpLodeUtil {
 
-    public static void upload(byte[] bytes,String fileName) throws Exception{
-        int port = 22;
-        String user = "root";
-        String password = "HAPPY142208*.";
-        String ip = "118.31.55.121";
+    @Value("${upload-file.data.port}")
+    private int port;
+    @Value("${upload-file.data.password}")
+    private String password;
+    @Value("${upload-file.data.ip}")
+    private String ip;
+    @Value("${upload-file.data.user}")
+    private String user;
+    @Value("${upload-file.data.filepath}")
+    private String filepath;
+
+    public void upload(byte[] bytes,String fileName) throws Exception{
+        //int port = 22;
+        //String user = "root";
+        //String password = "HAPPY142208*.";
+        //String ip = "118.31.55.121";
         // 服务器保存路径
-        String filepath = "/usr/local/images/";
+        //String filepath = "/usr/local/images/";
         Session session = null;
         Channel channel = null;
 
