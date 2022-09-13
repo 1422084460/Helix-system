@@ -1,28 +1,36 @@
 package com.art.artweb.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.art.artcommon.entity.IResult;
 import com.art.artcommon.utils.FileUpLodeUtil;
+import com.art.artcommon.utils.Tools;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
 
-@RequestMapping("/api/upload")
 @RestController
+@RequestMapping("/api/upload")
 public class FileController {
 
-    @RequestMapping("/getUploadUrl")
-    public String upLoadAvatar(MultipartFile file) {
+    /**
+     * 文件上传
+     * @param file 源文件
+     * @return IResult
+     */
+    @RequestMapping("/upLoadFile")
+    public IResult upLoadFile(MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        UUID uuid = UUID.randomUUID();
-        String newFileName = uuid.toString()+fileName;
-        //String filePath = "/usr/local/images/";
-        String filePath = "D:\\images\\";
+        long timestamp = System.currentTimeMillis();
+        String newFileName = Tools.getCode() + Tools.dateToStr(timestamp).substring(0,8) + fileName;
         try {
-            FileUpLodeUtil.fileUpLoad(file.getBytes(),filePath,newFileName);
+            FileUpLodeUtil.upload(file.getBytes(),newFileName);
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return newFileName;
+        JSONObject object = new JSONObject();
+        object.put("file",newFileName);
+        return IResult.success(object);
     }
 }
+

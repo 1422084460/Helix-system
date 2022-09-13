@@ -41,6 +41,7 @@
         <reflect.version>0.9.11</reflect.version>
         <druid.version>1.2.8</druid.version>
         <jdbc.version>2.3.7.RELEASE</jdbc.version>
+        <upload.version>0.1.54</upload.version>
     </properties>
 
     <dependencies>
@@ -192,6 +193,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-jdbc</artifactId>
                 <version>${jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>${upload.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
