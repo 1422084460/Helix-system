@@ -85,7 +85,6 @@ public class R {
      * 发布相关
      */
     public static final String STATUS_DRA = "drafted";//草稿
-    public static final String STATUS_PRE = "prepared";//预发布
     public static final String STATUS_PUB = "published";//已发布
     public static final String STATUS_EXA = "examine_failed";//审核未通过
 }

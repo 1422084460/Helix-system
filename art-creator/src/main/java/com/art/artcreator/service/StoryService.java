@@ -28,6 +28,7 @@ import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -262,7 +263,34 @@ public class StoryService {
     }
 
     /**
-     * 创建新章节 (预发布)
+     * 创建新小说
+     * @param data 请求数据
+     * @return boolean
+     */
+    public int createNewNovel(JSONObject data){
+        String email = data.getString("email");
+        String authorName = data.getString("authorName");
+        String novelName = data.getString("novelName");
+        String novelType = data.getString("novelType");
+        String introduction = data.getString("introduction");
+        String cover = data.getString("cover");
+        List<String> ids = new ArrayList<>();
+        NovelChapterList chapterList = new NovelChapterList()
+                .setEmail(email)
+                .setAuthor_name(authorName)
+                .setNovel_name(novelName)
+                .setCover(cover)
+                .setNovel_type(novelType)
+                .setIntroduction(introduction)
+                .setChapter_ids(ids)
+                .setParas_count(0)
+                .setNovel_score("0")
+                .setPara_current(0);
+        return novelChapterListMapper.insert(chapterList);
+    }
+
+    /**
+     * 创建新章节并保存为草稿
      * @param data 请求数据
      * @return int
      */
@@ -270,7 +298,6 @@ public class StoryService {
     public boolean createChapter(JSONObject data){
         Long timestamp = data.getLong("timestamp");
         String email = data.getString("email");
-        String authorName = data.getString("authorName");
         String novelName = data.getString("novelName");
         int paraCurrent = data.getIntValue("paraCurrent");
         String chapterName = data.getString("chapterName");
@@ -291,37 +318,28 @@ public class StoryService {
                 .setDetail(list)
                 .setCount(count)
                 .setCreate_time(createTime)
-                .setStatus(R.STATUS_PRE);
-        NovelChapterList chapterList = new NovelChapterList()
-                .setEmail(email)
-                .setAuthor_name(authorName)
-                .setNovel_name(novelName)
-                .setChapter_id(chapter_id)
-                .setParas_count(paraCurrent)
-                .setPara_current(paraCurrent);
+                .setStatus(R.STATUS_DRA);
         int stat1 = 0;
         int stat2 = 0;
         try {
             stat1 = chapterMapper.insert(chapter);
-            stat2 = novelChapterListMapper.insert(chapterList);
-            if (stat2 == 1){
-                UpdateWrapper<NovelChapterList> wrapper = new UpdateWrapper<>();
-                wrapper.set("paras_count",paraCurrent)
-                        .eq("email",email)
-                        .eq("novel_name",novelName);
-                novelChapterListMapper.update(null,wrapper);
-            }
+            QueryWrapper<NovelChapterList> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("novel_name",novelName);
+            NovelChapterList one = novelChapterListMapper.selectOne(queryWrapper);
+            List<String> oldIds = one.getChapter_ids();
+            oldIds.add(chapter_id);
+            UpdateWrapper<NovelChapterList> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set("chapter_ids",oldIds)
+                    .eq("email",email)
+                    .eq("novel_name",novelName);
+            stat2 = novelChapterListMapper.update(null,queryWrapper);
         }catch (Exception e){
             RedisUtil.set(email+"_"+novelName+"_"+paraCurrent,
                     JSON.toJSONString(chapter),
                     24,
-                    TimeUnit.HOURS);
-            RedisUtil.set(email+"_"+novelName+"_"+paraCurrent+"list",
-                    JSON.toJSONString(chapterList),
-                    24,
-                    TimeUnit.HOURS);
+                    TimeUnit.HOURS);//此处逻辑为先查询是否有缓存，如果有则先进行保存
         }
-        return (stat1==stat2 && stat1==1);
+        return (stat1==1)&&(stat2==1);
     }
 
     /**
@@ -336,7 +354,8 @@ public class StoryService {
         wrapper.eq("b.email",email)
                 .eq("b.novel_name",novelName)
                 .eq("b.para_current",target)
-                .apply("a.chapter_id = b.chapter_id");
+                .apply("a.novel_name = b.novel_name")
+                .apply("a.email = b.email");
         return chapterMapper.queryOneChapter(wrapper);
     }
 
@@ -353,7 +372,8 @@ public class StoryService {
             wrapper.eq("b.email",email)
                     .eq("b.novel_name",novelName)
                     .eq("a.status",R.STATUS_PUB)
-                    .apply("a.chapter_id = b.chapter_id")
+                    .apply("a.email = b.email")
+                    .apply("a.novel_name = b.novel_name")
                     .orderByAsc("b.para_current");
             List<JSONObject> list = chapterMapper.queryChapters(wrapper);
             stringList = Tools.convertChapters(list);
@@ -366,34 +386,74 @@ public class StoryService {
     }
 
     /**
-     * 发布并审核章节
+     * 修改内容并保存至草稿
      * @param data 请求数据
      * @return boolean
      */
-    public boolean checkPublishChapter(JSONObject data){
-        String is_admin = data.getString("is_admin");
+    public boolean saveChapter(JSONObject data){
+        String details = data.getString("details");
+        String chapterName = data.getString("chapterName");
         String chapter_id = data.getString("chapter_id");
-        boolean flag = is_admin.equals("1");
-        //管理员手动审核
-        if (flag){
-            UpdateWrapper<Chapter> wrapper = new UpdateWrapper<>();
-            wrapper.set("status",R.STATUS_PUB)
-                    .eq("chapter_id",chapter_id)
-                    .eq("status",R.STATUS_EXA);
-            int update = chapterMapper.update(null, wrapper);
-            return update==1;
-        }
-        //非管理员自动审核
-        QueryWrapper<Chapter> wrapper = new QueryWrapper<>();
-        wrapper.eq("chapter_id",chapter_id)
+        UpdateWrapper<Chapter> wrapper = new UpdateWrapper<>();
+        wrapper.set("chapterName",chapterName)
+                .set("details",details)//可能存在问题
+                .eq("chapter_id",chapter_id);
+        int update = chapterMapper.update(null, wrapper);
+        return update==1;
+    }
+
+    /**
+     * 发布并自动审核
+     * @param data 请求数据
+     */
+    public void checkPublishChapter(JSONObject data){
+        CompletableFuture.supplyAsync(()->{
+            String chapter_id = data.getString("chapter_id");
+            QueryWrapper<Chapter> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("chapter_id",chapter_id);
+            Chapter chapter = chapterMapper.selectOne(queryWrapper);
+            List<Chapter.ChapterPara> detail = chapter.getDetail();
+            List<String> list = new ArrayList<>();
+            for (Chapter.ChapterPara c : detail){
+                list.add(c.getPara());
+            }
+            return Tools.checkIfChapterLegal(list);
+        }).thenAccept(res->{
+            if (res){
+                UpdateWrapper<Chapter> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.set("status",R.STATUS_PUB)
+                        .eq("chapter_id",data.getString("chapter_id"));
+                chapterMapper.update(null,updateWrapper);
+            }
+        });
+    }
+
+    /**
+     * 再次审核自动审核不通过的章节
+     * @param data 请求数据
+     * @return boolean
+     */
+    public boolean checkChapter(JSONObject data){
+        String chapter_id = data.getString("chapter_id");
+        QueryWrapper<Chapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("chapter_id",chapter_id)
                 .eq("status",R.STATUS_EXA);
-        Chapter chapter = chapterMapper.selectOne(wrapper);
+        Chapter chapter = chapterMapper.selectOne(queryWrapper);
         List<Chapter.ChapterPara> detail = chapter.getDetail();
         List<String> list = new ArrayList<>();
         for (Chapter.ChapterPara c : detail){
             list.add(c.getPara());
         }
-        return Tools.checkIfChapterLegal(list);
+        boolean legal = Tools.checkIfChapterLegal(list);
+        if (legal){
+            UpdateWrapper<Chapter> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.set("status",R.STATUS_PUB)
+                    .eq("chapter_id",chapter_id)
+                    .eq("status",R.STATUS_EXA);
+            int update = chapterMapper.update(null, updateWrapper);
+            return update==1;
+        }
+        return false;
     }
 
     /**

@@ -5,6 +5,7 @@ import com.art.artadmin.entity.PersonalizedDress;
 import com.art.artadmin.service.ManageService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
+import com.art.artcreator.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,8 @@ public class ManageController {
 
     @Autowired
     private ManageService manageService;
+    @Autowired
+    private StoryService storyService;
 
     /**
      * 修改用户角色权限
@@ -61,5 +64,16 @@ public class ManageController {
         JSONObject object = new JSONObject();
         object.put("PersonalizedDress",res);
         return IResult.success(object);
+    }
+
+    /**
+     * 再次审核自动审核不通过的章节
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/checkChapter")
+    public IResult checkChapter(@RequestBody JSONObject data){
+        boolean flag = storyService.checkChapter(data);
+        return flag ? IResult.success("审核成功",null) : IResult.fail("审核失败，已通知再次修改",R.CODE_FAIL);
     }
 }

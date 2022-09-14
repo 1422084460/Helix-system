@@ -35,8 +35,8 @@ public class NovelChapterList {
     private String novel_score;
     @TableField
     private String introduction;
-    @TableField
-    private String chapter_id;
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private List<String> chapter_ids;
     @TableField
     private Integer paras_count;
     @TableField

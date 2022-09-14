@@ -82,17 +82,14 @@ public class StoryController {
     }
 
     /**
-     * 发布并审核章节
+     * 异步发布并自动审核章节内容
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/checkChapter")
+    @RequestMapping("/createAndCheckChapter")
     public IResult checkPublishChapter(@RequestBody JSONObject data){
-        boolean flag = storyService.checkPublishChapter(data);
-        if (flag){
-            IResult.success("审核通过",null);
-        }
-        return IResult.fail("审核不通过，请联系管理员或自行修改发布内容",null);
+        storyService.checkPublishChapter(data);
+        return IResult.success("发布成功，请稍后刷新审核状态！",null);
     }
 
     /**
@@ -118,9 +115,9 @@ public class StoryController {
      */
     @RequestMapping("/showAllChapters")
     public IResult showAllChapters(@RequestBody JSONObject data){
-        String email = data.getString("email");
+        String authorEmail = data.getString("email");
         String novelName = data.getString("novelName");
-        List<String> result = storyService.showAllChapters(email, novelName);
+        List<String> result = storyService.showAllChapters(authorEmail, novelName);
         JSONObject object = new JSONObject();
         object.put("chapters",result);
         return IResult.success(object);
@@ -150,5 +147,19 @@ public class StoryController {
     public IResult queryNovels(@RequestBody JSONObject data){
         JSONObject result = storyService.queryNovels(data);
         return IResult.success(result);
+    }
+
+    /**
+     * 修改内容并保存至草稿
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/saveChapter")
+    public IResult saveChapter(@RequestBody JSONObject data){
+        boolean res = storyService.saveChapter(data);
+        if (res){
+            return IResult.success();
+        }
+        return IResult.fail("保存失败",R.CODE_FAIL);
     }
 }
