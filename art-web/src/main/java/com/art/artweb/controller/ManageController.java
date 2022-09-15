@@ -6,6 +6,7 @@ import com.art.artadmin.service.IndividuationService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artcreator.service.StoryService;
+import com.art.artmanage.service.ManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,8 @@ public class ManageController {
     @Autowired
     private IndividuationService individuationService;
     @Autowired
+    private ManageService manageService;
+    @Autowired
     private StoryService storyService;
 
     /**
@@ -35,7 +38,7 @@ public class ManageController {
      */
     @RequestMapping("/updateModule")
     public IResult updateModule(@RequestBody JSONObject data){
-        boolean update = individuationService.updateModule(data);
+        boolean update = manageService.updateModule(data);
         return update ? IResult.success() : IResult.fail("权限修改失败，请重试",R.CODE_FAIL);
     }
 

@@ -53,6 +53,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.art</groupId>
+            <artifactId>art-manage</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
         </dependency>

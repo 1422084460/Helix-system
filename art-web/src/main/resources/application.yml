@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: common ,admin ,creator ,search ,blog
+    active: common ,admin ,creator ,search ,blog ,manage
 
   devtools:
     restart:
