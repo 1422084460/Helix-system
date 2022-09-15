@@ -3,11 +3,12 @@ package com.art.artadmin.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.art.artadmin.entity.Character;
 import com.art.artadmin.entity.PersonalizedDress;
 import com.art.artadmin.mapper.PersonalizedDressMapper;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,20 @@ import java.util.stream.Collectors;
  * @create 2022/9/9
  */
 @Service
-public class ManageService {
+public class IndividuationService {
 
     @Autowired
     private PersonalizedDressMapper personalizedDressMapper;
 
-    public void updateModule(){}
+    /**
+     * 修改用户角色权限
+     * @param data 请求数据
+     * @return boolean
+     */
+    public boolean updateModule(JSONObject data){
+        UpdateWrapper<Character> wrapper = new UpdateWrapper<>();
+        return true;
+    }
 
     /**
      * 添加个性装扮

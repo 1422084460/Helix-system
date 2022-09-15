@@ -2,7 +2,7 @@ package com.art.artweb.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art.artadmin.entity.PersonalizedDress;
-import com.art.artadmin.service.ManageService;
+import com.art.artadmin.service.IndividuationService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artcreator.service.StoryService;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ManageController {
 
     @Autowired
-    private ManageService manageService;
+    private IndividuationService individuationService;
     @Autowired
     private StoryService storyService;
 
@@ -35,8 +35,8 @@ public class ManageController {
      */
     @RequestMapping("/updateModule")
     public IResult updateModule(@RequestBody JSONObject data){
-        manageService.updateModule();
-        return IResult.success();
+        boolean update = individuationService.updateModule(data);
+        return update ? IResult.success() : IResult.fail("权限修改失败，请重试",R.CODE_FAIL);
     }
 
     /**
@@ -46,11 +46,8 @@ public class ManageController {
      */
     @RequestMapping("/addPersonalizedDress")
     public IResult addPersonalizedDress(@RequestBody JSONObject data){
-        int res = manageService.addPersonalizedDress(data);
-        if (res == 1){
-            return IResult.success();
-        }
-        return IResult.fail("添加失败", R.CODE_FAIL);
+        int res = individuationService.addPersonalizedDress(data);
+        return res == 1 ? IResult.success() : IResult.fail("添加失败", R.CODE_FAIL);
     }
 
     /**
@@ -60,7 +57,7 @@ public class ManageController {
      */
     @RequestMapping("/showPersonalizedDress")
     public IResult showPersonalizedDress(@RequestBody JSONObject data){
-        List<PersonalizedDress> res = manageService.showPersonalizedDress(data);
+        List<PersonalizedDress> res = individuationService.showPersonalizedDress(data);
         JSONObject object = new JSONObject();
         object.put("PersonalizedDress",res);
         return IResult.success(object);
