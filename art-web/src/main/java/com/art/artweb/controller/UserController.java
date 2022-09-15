@@ -99,10 +99,7 @@ public class UserController {
         String email = data.getString("email");
         String newPwd = data.getString("newPassWord");
         int i = userService.changePwd(email, newPwd);
-        if (i==1){
-            return IResult.success();
-        }
-        return IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
+        return i==1 ? IResult.success() : IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
 
     /**
@@ -151,10 +148,7 @@ public class UserController {
         int score = data.getIntValue("score");
         int signInCount = data.getIntValue("signInCount");
         int signIn = userService.signIn(email,timestamp,score,signInCount);
-        if (signIn==1){
-            return IResult.success();
-        }
-        return IResult.fail("签到失败",R.CODE_FAIL);
+        return signIn==1 ? IResult.success() : IResult.fail("签到失败",R.CODE_FAIL);
     }
 
     /**

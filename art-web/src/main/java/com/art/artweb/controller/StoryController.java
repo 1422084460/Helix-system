@@ -75,10 +75,7 @@ public class StoryController {
     @RequestMapping("/createChapter")
     public IResult createChapter(@RequestBody JSONObject data){
         boolean res = storyService.createChapter(data);
-        if (res){
-            return IResult.success();
-        }
-        return IResult.fail("创建失败",R.CODE_FAIL);
+        return res ? IResult.success() : IResult.fail("创建失败",R.CODE_FAIL);
     }
 
     /**
@@ -132,10 +129,7 @@ public class StoryController {
     @ShowArgs
     public IResult createNovel(@RequestBody JSONObject data){
         int stat = storyService.createNovel(data);
-        if (stat==1){
-            return IResult.success("创建成功",null);
-        }
-        return IResult.fail("创建失败，请稍后重试",null);
+        return stat==1 ? IResult.success("创建成功",null) : IResult.fail("创建失败，请稍后重试",null);
     }
 
     /**
@@ -157,9 +151,6 @@ public class StoryController {
     @RequestMapping("/saveChapter")
     public IResult saveChapter(@RequestBody JSONObject data){
         boolean res = storyService.saveChapter(data);
-        if (res){
-            return IResult.success();
-        }
-        return IResult.fail("保存失败",R.CODE_FAIL);
+        return res ? IResult.success() : IResult.fail("保存失败",R.CODE_FAIL);
     }
 }
