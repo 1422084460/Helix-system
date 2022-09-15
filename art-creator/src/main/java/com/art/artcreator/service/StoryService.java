@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
-import com.art.artcommon.entity.IResult;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
 import com.art.artcreator.entity.NamePackage;
@@ -13,7 +12,7 @@ import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
 import com.art.artcreator.mapper.NovelChapterListMapper;
 import com.art.artcreator.mongo.NameAdopted;
-import com.art.artcommon.utils.MongoUtils;
+import com.art.artcommon.utils.MongoClient;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.art.artcreator.novel.Chapter;
@@ -225,41 +224,26 @@ public class StoryService {
     }
 
     /**
-     * 获取对应采用名集合
-     * @param email 邮箱名
-     * @return List<NamePackage>
-     */
-    public List<NamePackage> getAdoptedName(String email){
-        List<?> list = MongoUtils.queryByFilterOne(FULL_CLASS_NAME, "email", email);
-        if (list!=null){
-            NameAdopted n = (NameAdopted) list.get(0);
-            return n.getNameList();
-        }
-        return null;
-    }
-
-    /**
      * 添加采用名字
      * @param name 打包名
      */
     public void addAdoptedName(NamePackage name,String email){
-        List<NamePackage> list = getAdoptedName(email);
-        if (list == null){
-            list = new ArrayList<>();
+        MongoClient<NameAdopted> client = new MongoClient<>(NameAdopted.class);
+        NameAdopted one = (NameAdopted) client.queryOne("email", email);
+        if (one == null){
+            List<NamePackage> list = new ArrayList<NamePackage>(){{
+                add(name);
+            }};
+            NameAdopted newOne = new NameAdopted().setEmail(email).setNameList(list);
+            client.saveOne(newOne);
+        }else {
+            List<NamePackage> list = one.getNameList();
+            if (list == null){
+                list = new ArrayList<>();
+            }
+            list.add(name);
+            client.updateOne("email",email,"nameList",list);
         }
-        list.add(name);
-        MongoUtils.updateOne(FULL_CLASS_NAME,"email","nameList",email,list);
-    }
-
-    /**
-     * 初始化表信息
-     * @param email 邮箱名
-     */
-    public void initTableNameAdopted(String email){
-        String[] f = {"email"};
-        Class<?>[] c = {email.getClass()};
-        Object[] o = {email};
-        MongoUtils.saveOne(FULL_CLASS_NAME,f,c,o);
     }
 
     /**

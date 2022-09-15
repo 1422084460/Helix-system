@@ -53,11 +53,10 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/adoptName")
+    @RequestMapping("/addAdoptedName")
     @ShowArgs
-    public IResult adoptName(@RequestBody JSONObject data) {
+    public IResult addAdoptedName(@RequestBody JSONObject data) {
         try {
-            String name = "com.art.artcommon.mongo.NameAdopted";
             String queryValue = data.getString("email");
             Object o = data.get("name");
             storyService.addAdoptedName((NamePackage) o,queryValue);
