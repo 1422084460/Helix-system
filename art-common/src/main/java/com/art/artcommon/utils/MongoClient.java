@@ -155,4 +155,14 @@ public class MongoClient<T> {
             throw new CustomException(R.CODE_FAIL,"删除数据失败");
         }
     }
+
+    /**
+     * mongo联合查询
+     * @param field 目标筛选字段
+     * @param list in(?,?,...)内部?所在的集合
+     * @return List<T>
+     */
+    public List<T> queryTogether(String field,List<?> list){
+        return datastore.find(clazz).field(field).in(list).asList();
+    }
 }
