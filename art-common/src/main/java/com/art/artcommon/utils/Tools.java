@@ -359,4 +359,13 @@ public class Tools {
         }
         return 5;
     }
+
+    /**
+     * 生成唯一nameId
+     * @param name 名
+     * @return String
+     */
+    public static String getNameId(String name){
+        return toMd5(name);
+    }
 }
