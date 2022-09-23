@@ -270,35 +270,6 @@ public class StoryService {
         }
     }
 
-//    public List getFinalNameList2(List<NamePublished> namePackageList){
-//        String email = namePackageList.get(0).getEmail();
-//        MongoClient<NamePublished> client = new MongoClient<>(NamePublished.class);
-//        List<NamePublished> onlinePublishedList = client.queryByFilter("email", email, "", true);
-//        String str = JSON.toJSONString(namePackageList);
-//        List<NamePublished> localPublishedList = JSON.parseObject(str, new TypeReference<List<NamePublished>>(){});
-//        if (onlinePublishedList.size()==0){
-//            client.saveBatch(localPublishedList);
-//            return localPublishedList;
-//        }else {
-//            List<NamePublished> finalList = new ArrayList<>();
-//            Map<String,NamePublished> onlineMap = new HashMap<>();
-//            for (NamePublished online : onlinePublishedList){
-//                onlineMap.put(online.getNameId(),online);
-//            }
-//            for (NamePublished local : localPublishedList){
-//                String localNameId = local.getNameId();
-//                if (onlineMap.get(localNameId)==null){
-//                    finalList.add(local);
-//                }else {
-//                    finalList.add(onlineMap.get(localNameId));
-//                }
-//                //localPublishedList.remove(local);
-//            }
-//            client.saveBatch(localPublishedList);
-//            return finalList;
-//        }
-//    }
-
     /**
      * 添加采用名字
      * @param nameId 添加名唯一id
