@@ -5,14 +5,13 @@ import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.PageMaster;
-import com.art.artcreator.entity.NamePackage;
+import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -31,20 +30,18 @@ public class StoryController {
     @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
         try {
-            List<String> name = storyService.createName(data.getString("area"),
+            List<NamePublished> packages = storyService.createName(data.getString("area"),
                     data.getString("category"),
                     data.getString("style"),
                     data.getIntValue("first_has_num"),
                     data.getIntValue("last_has_num"),
-                    data.getBooleanValue("has_inner_name"));
-            List packages = storyService.doPackage(name,
-                    data.getString("style"),
-                    data.getString("category"),
-                    data.getString("area"));
-            PageMaster res = PageMaster.create(packages,2);
+                    data.getBooleanValue("has_inner_name"),
+                    data.getString("email"));
+            List<Object> finalNameList = storyService.getFinalNameList(packages);
+            PageMaster res = PageMaster.create(finalNameList,10);
             return IResult.success(res);
         } catch (Exception e) {
-            return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
+            return IResult.fail(e.getMessage(), R.CODE_FAIL);
         }
     }
 
@@ -58,12 +55,23 @@ public class StoryController {
     public IResult addAdoptedName(@RequestBody JSONObject data) {
         try {
             String queryValue = data.getString("email");
-            Object o = data.get("name");
-            storyService.addAdoptedName((NamePackage) o,queryValue);
+            String nameId = data.getString("nameId");
+            storyService.addAdoptedName(nameId,queryValue);
             return IResult.success(null);
         }catch (Exception e){
             return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
         }
+    }
+
+    /**
+     * 对名字进行评分
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/markForName")
+    public IResult markForName(@RequestBody JSONObject data){
+        storyService.markForName();
+        return IResult.success();
     }
 
     /**

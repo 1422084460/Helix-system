@@ -21,5 +21,5 @@ public class NameAdopted {
     @Id
     private Object id;
     private String email;
-    private List<NamePackage> nameList;
+    private List<String> nameList;
 }

@@ -115,7 +115,7 @@ public class MongoClient<T> {
      * 插入多条mongo集合文档
      * @param list 数据集合
      */
-    public void saveBatch(List<Object> list){
+    public void saveBatch(List list){
         try{
             datastore.save(list);
         }catch (Exception e){

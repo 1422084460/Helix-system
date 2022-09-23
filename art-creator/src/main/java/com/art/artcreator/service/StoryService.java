@@ -6,7 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
-import com.art.artcreator.entity.NamePackage;
+//import com.art.artcreator.entity.NamePackage;
 import com.art.artcreator.mapper.ChapterMapper;
 import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
@@ -15,6 +15,7 @@ import com.art.artcreator.mongo.NameAdopted;
 import com.art.artcommon.utils.MongoClient;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
+import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.novel.Chapter;
 import com.art.artcreator.novel.NovelChapterList;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -44,8 +47,6 @@ public class StoryService {
     @Autowired
     private NovelChapterListMapper novelChapterListMapper;
 
-    private static final String FULL_CLASS_NAME = "com.art.artcreator.mongo.NameAdopted";
-
     /**
      * 创建名字总方法，默认生成30个
      * @param area 地域
@@ -54,9 +55,9 @@ public class StoryService {
      * @param style 风格
      * @param first_has_num 姓包含字数
      * @param last_has_num 名包含字数
-     * @return List<String>
+     * @return List<NamePublished>
      */
-    public List<String> createName(String area,String category,String style,int first_has_num,int last_has_num,boolean has_inner_name){
+    public List<NamePublished> createName(String area,String category,String style,int first_has_num,int last_has_num,boolean has_inner_name,String email){
         StopWatch watch = new StopWatch();
         watch.start();
         int default_firstNameNum = 30;
@@ -115,9 +116,25 @@ public class StoryService {
                 size--;
             }
         }
+        int nid = 1;
+        List<NamePublished> lists = new ArrayList<>();
+        for (String nameStr : finalNameList) {
+            NamePublished namePublished = new NamePublished();
+            namePublished.setNid(nid)
+                    .setName(nameStr)
+                    .setStyle(style)
+                    .setCategory(category)
+                    .setArea(area)
+                    .setEmail(email)
+                    .setIsAdopted(false)
+                    .setScore(0)
+                    .setNameId(Tools.getNameId(nameStr));
+            lists.add(namePublished);
+            nid++;
+        }
         watch.stop();
         log.info("创建该组名字共花费时间"+watch.getTotalTimeMillis()+"毫秒");
-        return finalNameList;
+        return lists;
     }
 
     /**
@@ -190,61 +207,122 @@ public class StoryService {
     }
 
     /**
-     * 将生成结果打包
-     * @return List
+     * 批量更新所有采用状态
+     * @param locals 本地生成姓名集合
+     * @param cloudMap 云数据姓名map集合
+     * @return List<NamePublished>
      */
-    public List<NamePackage> doPackage(List<String> nameList,String style,String category,String area){
-        List<NamePackage> list = new ArrayList<>();
-        int nid = 1;
-        String cate;
-        String a;
-        if (category.equals("1")){
-            cate = "男";
-        }else if (category.equals("2")){
-            cate = "女";
-        }else {
-            cate = "中性";
+    public List<NamePublished> batchUpdateAdoptedStatus(List<NamePublished> locals,Map<String,NamePublished> cloudMap){
+        for (NamePublished local : locals){
+            if (local.getIsAdopted() != cloudMap.get(local.getNameId()).getIsAdopted()){
+                local.setIsAdopted(cloudMap.get(local.getNameId()).getIsAdopted());
+            }
         }
-        if (area.equals("ch")){
-            a = "中式";
-        }else {
-            a = "非中式";
-        }
-        for (String name : nameList) {
-            NamePackage namePackage = new NamePackage();
-            namePackage.setNid(nid)
-                    .setName(name)
-                    .setStyle(style)
-                    .setCategory(cate)
-                    .setArea(a);
-            list.add(namePackage);
-            nid++;
-        }
-        return list;
+        return locals;
     }
 
     /**
-     * 添加采用名字
-     * @param name 打包名
+     * 以下标批量更新部分采用状态
+     * @param locals 本地生成姓名集合
+     * @param indexList 下标集合
+     * @param cloudMap 云数据姓名map集合
+     * @return List<NamePublished>
      */
-    public void addAdoptedName(NamePackage name,String email){
+    public List<NamePublished> batchUpdateElement(List<NamePublished> locals,List<Integer> indexList,Map<String,NamePublished> cloudMap){
+        for (int index : indexList){
+            String nameId = locals.get(index).getNameId();
+            locals.get(index).setIsAdopted(cloudMap.get(nameId).getIsAdopted());
+        }
+        return locals;
+    }
+
+    /**
+     * 生成最终的姓名集合
+     * @param namePackageList 生成的姓名打包集合
+     * @return List<?>
+     */
+    public List getFinalNameList(List<NamePublished> namePackageList){
+        List<String> justNameList = new ArrayList<>();
+        List<Integer> indexList = new ArrayList<>();
+        for (NamePublished namePackage : namePackageList) {
+            justNameList.add(namePackage.getName());
+        }
+        MongoClient<NamePublished> client = new MongoClient<>(NamePublished.class);
+        List<NamePublished> publishedList = client.queryTogether("name", justNameList);
+        Map<String,NamePublished> cloudMap = new HashMap<>();
+        for (NamePublished cloud : publishedList){
+            cloudMap.put(cloud.getNameId(),cloud);
+        }
+        if (namePackageList.size() == publishedList.size()){
+            return batchUpdateAdoptedStatus(namePackageList,cloudMap);
+        }else {
+            //此时namePackageList.size() > publishedList.size(),重复部分更新采用状态,非重复部分push至云端
+            List<NamePublished> pushList = new ArrayList<>();
+            for (int i=0;i<namePackageList.size();i++){
+                if (cloudMap.get(namePackageList.get(i).getNameId()) == null){
+                    pushList.add(namePackageList.get(i));
+                }else {
+                    indexList.add(i);
+                }
+            }
+            client.saveBatch(pushList);
+            return batchUpdateElement(namePackageList,indexList,cloudMap);
+        }
+    }
+
+//    public List getFinalNameList2(List<NamePublished> namePackageList){
+//        String email = namePackageList.get(0).getEmail();
+//        MongoClient<NamePublished> client = new MongoClient<>(NamePublished.class);
+//        List<NamePublished> onlinePublishedList = client.queryByFilter("email", email, "", true);
+//        String str = JSON.toJSONString(namePackageList);
+//        List<NamePublished> localPublishedList = JSON.parseObject(str, new TypeReference<List<NamePublished>>(){});
+//        if (onlinePublishedList.size()==0){
+//            client.saveBatch(localPublishedList);
+//            return localPublishedList;
+//        }else {
+//            List<NamePublished> finalList = new ArrayList<>();
+//            Map<String,NamePublished> onlineMap = new HashMap<>();
+//            for (NamePublished online : onlinePublishedList){
+//                onlineMap.put(online.getNameId(),online);
+//            }
+//            for (NamePublished local : localPublishedList){
+//                String localNameId = local.getNameId();
+//                if (onlineMap.get(localNameId)==null){
+//                    finalList.add(local);
+//                }else {
+//                    finalList.add(onlineMap.get(localNameId));
+//                }
+//                //localPublishedList.remove(local);
+//            }
+//            client.saveBatch(localPublishedList);
+//            return finalList;
+//        }
+//    }
+
+    /**
+     * 添加采用名字
+     * @param nameId 添加名唯一id
+     */
+    public void addAdoptedName(String nameId,String email){
         MongoClient<NameAdopted> client = new MongoClient<>(NameAdopted.class);
         NameAdopted one = (NameAdopted) client.queryOne("email", email);
         if (one == null){
-            List<NamePackage> list = new ArrayList<NamePackage>(){{
-                add(name);
+            List<String> list = new ArrayList<String>(){{
+                add(nameId);
             }};
             NameAdopted newOne = new NameAdopted().setEmail(email).setNameList(list);
             client.saveOne(newOne);
         }else {
-            List<NamePackage> list = one.getNameList();
+            List<String> list = one.getNameList();
             if (list == null){
                 list = new ArrayList<>();
             }
-            list.add(name);
+            list.add(nameId);
             client.updateOne("email",email,"nameList",list);
         }
     }
+
+    public void markForName(){}
 
     /**
      * 创建新小说
