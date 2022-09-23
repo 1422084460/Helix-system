@@ -42,6 +42,9 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
         }
 
         String token = request.getHeader("token");
+        if (token == null){
+            throw new CustomException(R.CODE_FAIL, "用户未登录");
+        }
         IResult res;
         String name = Thread.currentThread().getName();
         try {
