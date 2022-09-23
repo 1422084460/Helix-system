@@ -93,7 +93,7 @@ public class MongoClient<T> {
      * @param value 对应值
      * @return Object
      */
-    public Object queryOne(String condition,Object value) {
+    public T queryOne(String condition,Object value) {
         Query<T> query = datastore.createQuery(clazz).filter(condition,value);
         MorphiaCursor<T> cursor = query.find();
         return cursor.toList().get(0);
@@ -124,15 +124,34 @@ public class MongoClient<T> {
     }
 
     /**
-     * 更新单个mongo集合文档
-     * @param targetField 目标字段
+     * 按照单个条件更新mongo集合文档
+     * @param targetField 目标筛选字段
      * @param updateField 预更新字段
-     * @param queryValue 目标字段值
+     * @param queryValue 目标筛选字段值
      * @param newValue 更新值
      */
-    public void updateOne(String targetField,String updateField,Object queryValue,Object newValue){
+    public void update(String targetField,String updateField,Object queryValue,Object newValue){
         try {
             Query<T> query = datastore.createQuery(clazz).field(targetField).equal(queryValue);
+            UpdateOperations<T> operations = datastore.createUpdateOperations(clazz).set(updateField,newValue);
+            datastore.update(query,operations);
+        }catch (Exception e){
+            throw new CustomException(R.CODE_FAIL,"更新数据失败");
+        }
+    }
+
+    /**
+     * 按照多个条件更新mongo集合文档
+     * @param filter 目标筛选字段map
+     * @param updateField 预更新字段
+     * @param newValue 更新值
+     */
+    public void update(Map<String,Object> filter,String updateField,Object newValue){
+        try {
+            Query<T> query = datastore.createQuery(clazz);
+            for (Map.Entry<String,Object> entry : filter.entrySet()){
+                query.field(entry.getKey()).equal(entry.getValue());
+            }
             UpdateOperations<T> operations = datastore.createUpdateOperations(clazz).set(updateField,newValue);
             datastore.update(query,operations);
         }catch (Exception e){

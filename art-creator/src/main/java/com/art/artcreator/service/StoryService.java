@@ -274,22 +274,11 @@ public class StoryService {
      * @param nameId 添加名唯一id
      */
     public void addAdoptedName(String nameId,String email){
-        MongoClient<NameAdopted> client = new MongoClient<>(NameAdopted.class);
-        NameAdopted one = (NameAdopted) client.queryOne("email", email);
-        if (one == null){
-            List<String> list = new ArrayList<String>(){{
-                add(nameId);
-            }};
-            NameAdopted newOne = new NameAdopted().setEmail(email).setNameList(list);
-            client.saveOne(newOne);
-        }else {
-            List<String> list = one.getNameList();
-            if (list == null){
-                list = new ArrayList<>();
-            }
-            list.add(nameId);
-            client.updateOne("email",email,"nameList",list);
-        }
+        MongoClient<NamePublished> client = new MongoClient<>(NamePublished.class);
+        Map<String,Object> filter = new HashMap<>();
+        filter.put("email",email);
+        filter.put("nameId",nameId);
+        client.update(filter,"isAdopted",true);
     }
 
     public void markForName(){}
