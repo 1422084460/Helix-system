@@ -6,7 +6,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
-//import com.art.artcreator.entity.NamePackage;
 import com.art.artcreator.mapper.ChapterMapper;
 import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
@@ -48,7 +47,7 @@ public class StoryService {
     private NovelChapterListMapper novelChapterListMapper;
 
     /**
-     * 创建名字总方法，默认生成30个
+     * 创建名字总方法，默认生成50个
      * @param area 地域
      * @param has_inner_name 是否包含中间名
      * @param category 性别分类
@@ -60,8 +59,8 @@ public class StoryService {
     public List<NamePublished> createName(String area,String category,String style,int first_has_num,int last_has_num,boolean has_inner_name,String email){
         StopWatch watch = new StopWatch();
         watch.start();
-        int default_firstNameNum = 30;
-        int default_lastNameNum = 30*2;
+        int default_firstNameNum = 50;
+        int default_lastNameNum = 50*2;
         List<String> finalNameList = new ArrayList<>();
         StringBuilder name = new StringBuilder();
         List<FirstName> firstNameList = createFirst(area, category, style, first_has_num);
@@ -89,7 +88,7 @@ public class StoryService {
                 size--;
             }
         }else {
-            //筛选出的集合数大于等于30的情况
+            //筛选出的集合数大于等于50的情况
             while (size>0){
                 List<Integer> newFirstRandom = Tools.removeCursor(firstRandom, firstNameList.size());
                 name.append(firstNameList.get(newFirstRandom.get(0)).getFirst_name());

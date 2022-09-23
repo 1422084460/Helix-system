@@ -188,11 +188,11 @@ public class UserService {
     }
 
     /**
-     * 获取用户个人中心页面
+     * 获取用户个人中心用户信息
      * @param email 邮箱
      * @return JSONObject
      */
-    public JSONObject getUserPageInfo(String email){
+    public JSONObject getUserPageUserInfo(String email){
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("email",email);
         User user = userMapper.selectOne(wrapper);
@@ -205,5 +205,11 @@ public class UserService {
         result.put("signInCount",user.getSign_in_count());
         result.put("roleKey",user.getRole_key());
         return result;
+    }
+
+    //渲染整个用户个人中心界面
+    public JSONObject renderUserPage(String email){
+        getUserPageUserInfo(email);
+        return null;
     }
 }

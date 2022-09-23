@@ -159,7 +159,7 @@ public class UserController {
     @RequestMapping("/getUserPageInfo")
     public IResult getUserPageInfo(@RequestBody JSONObject data){
         String email = data.getString("email");
-        JSONObject userPageInfo = userService.getUserPageInfo(email);
-        return IResult.success(userPageInfo);
+        JSONObject userPage = userService.renderUserPage(email);
+        return IResult.success(userPage);
     }
 }

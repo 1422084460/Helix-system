@@ -61,12 +61,19 @@ public class Tools {
      * @return List<Integer>
      */
     public static List<Integer> getRandom(int size){
+        int count = 0;
+        int totalNumSize = (size-1)*size/2;
         Random random = new Random();
         List<Integer> list = new ArrayList<>(size);
         for (int i=0;i<size;i++){
+            if (list.size()+1 == size){
+                list.add(totalNumSize-count);
+                break;
+            }
             Integer value = random.nextInt(size);
             if (!list.contains(value)){
                 list.add(value);
+                count += value;
                 continue;
             }
             i--;
