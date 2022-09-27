@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 
 /**
  * description
- * 个性化服务类
+ * 用户个性化服务类
  * @author lou
  * @create 2022/9/9
  */
 @Service
-public class IndividuationService {
+public class UserIndividuationService {
 
     @Autowired
     private PersonalizedDressMapper personalizedDressMapper;

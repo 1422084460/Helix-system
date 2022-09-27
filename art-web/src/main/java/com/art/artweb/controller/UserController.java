@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.art.artadmin.service.UserPageService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.AuthL;
 import com.art.artcommon.custominterface.ShowArgs;
@@ -12,7 +13,7 @@ import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
-import com.art.artadmin.service.UserService;
+import com.art.artadmin.service.UserAuthService;
 import com.art.artweb.async.AsyncTaskMain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserAuthService userAuthService;
+    @Autowired
+    private UserPageService userPageService;
 
     @Autowired
     private AsyncTaskMain task;
@@ -42,9 +45,9 @@ public class UserController {
         String token = "";
         IResult loginStatus = null;
         if (data.get("login_mode").equals(R.CODE_LOGIN_WITH_PWD)){
-            loginStatus = userService.login(data);
+            loginStatus = userAuthService.login(data);
         }else {
-            loginStatus = userService.verifyCode(data);
+            loginStatus = userAuthService.verifyCode(data);
         }
         if (loginStatus.isSuccess()){
             IResult res = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
@@ -53,7 +56,7 @@ public class UserController {
                 Object user = loginStatus.getData().get("user");
                 String s = JSONArray.toJSON(user).toString();
                 String[] args = {"username","status","email"};
-                token = userService.createToken(s,args);
+                token = userAuthService.createToken(s,args);
                 JSONObject object = new JSONObject();
                 object.put("token",token);
                 return IResult.success(object);
@@ -74,10 +77,10 @@ public class UserController {
         data.put("create_time",date);
         String s = data.toJSONString();
         User user = JSON.parseObject(s,new TypeReference<User>(){});
-        int status = userService.register(user);
+        int status = userAuthService.register(user);
         if(status==1){
             String[] args = {"username","status","email"};
-            String token = userService.createToken(s, args);
+            String token = userAuthService.createToken(s, args);
             JSONObject object = new JSONObject();
             object.put("token",token);
             return IResult.success(object);
@@ -98,7 +101,7 @@ public class UserController {
     public IResult changePwd(@RequestBody JSONObject data){
         String email = data.getString("email");
         String newPwd = data.getString("newPassWord");
-        int i = userService.changePwd(email, newPwd);
+        int i = userAuthService.changePwd(email, newPwd);
         return i==1 ? IResult.success() : IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
 
@@ -123,7 +126,7 @@ public class UserController {
     @RequestMapping("/verifyCode")
     @ShowArgs
     public IResult verifyCode(@RequestBody JSONObject data){
-        return userService.verifyCode(data);
+        return userAuthService.verifyCode(data);
     }
 
     /**
@@ -133,7 +136,7 @@ public class UserController {
      */
     @RequestMapping("/cancelCurrentUser")
     public IResult cancelCurrentUser(@RequestBody JSONObject data){
-        return userService.cancelCurrentUser(data);
+        return userAuthService.cancelCurrentUser(data);
     }
 
     /**
@@ -147,7 +150,7 @@ public class UserController {
         long timestamp = data.getLong("timestamp");
         int score = data.getIntValue("score");
         int signInCount = data.getIntValue("signInCount");
-        int signIn = userService.signIn(email,timestamp,score,signInCount);
+        int signIn = userPageService.signIn(email,timestamp,score,signInCount);
         return signIn==1 ? IResult.success() : IResult.fail("签到失败",R.CODE_FAIL);
     }
 
@@ -159,7 +162,7 @@ public class UserController {
     @RequestMapping("/getUserPageInfo")
     public IResult getUserPageInfo(@RequestBody JSONObject data){
         String email = data.getString("email");
-        JSONObject userPage = userService.renderUserPage(email);
+        JSONObject userPage = userPageService.renderUserPage(email);
         return IResult.success(userPage);
     }
 }

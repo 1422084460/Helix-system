@@ -6,7 +6,8 @@ import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.PageMaster;
 import com.art.artcreator.mongo.NamePublished;
-import com.art.artcreator.service.StoryService;
+import com.art.artcreator.service.StoryNameService;
+import com.art.artcreator.service.StoryNovelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,9 @@ import java.util.List;
 public class StoryController {
 
     @Autowired
-    private StoryService storyService;
+    private StoryNameService storyNameService;
+    @Autowired
+    private StoryNovelService storyNovelService;
 
     /**
      * 创建姓名
@@ -30,14 +33,14 @@ public class StoryController {
     @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
         try {
-            List<NamePublished> packages = storyService.createName(data.getString("area"),
+            List<NamePublished> packages = storyNameService.createName(data.getString("area"),
                     data.getString("category"),
                     data.getString("style"),
                     data.getIntValue("first_has_num"),
                     data.getIntValue("last_has_num"),
                     data.getBooleanValue("has_inner_name"),
                     data.getString("email"));
-            List<Object> finalNameList = storyService.getFinalNameList(packages);
+            List<Object> finalNameList = storyNameService.getFinalNameList(packages);
             PageMaster res = PageMaster.create(finalNameList,10);
             return IResult.success(res);
         } catch (Exception e) {
@@ -56,7 +59,7 @@ public class StoryController {
         try {
             String queryValue = data.getString("email");
             String nameId = data.getString("nameId");
-            storyService.addAdoptedName(nameId,queryValue);
+            storyNameService.addAdoptedName(nameId,queryValue);
             return IResult.success(null);
         }catch (Exception e){
             return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
@@ -70,8 +73,25 @@ public class StoryController {
      */
     @RequestMapping("/markForName")
     public IResult markForName(@RequestBody JSONObject data){
-        storyService.markForName();
+        String email = data.getString("email");
+        String nameId = data.getString("nameId");
+        int score = data.getIntValue("score");
+        storyNameService.markForName(nameId,email,score);
         return IResult.success();
+    }
+
+    /**
+     * 展示名字详细信息
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/showNameDetails")
+    public IResult showNameDetails(@RequestBody JSONObject data){
+        JSONObject res = new JSONObject();
+        String nameId = data.getString("nameId");
+        JSONObject details = storyNameService.showNameDetails(nameId);
+        res.put("details",details);
+        return IResult.success(res);
     }
 
     /**
@@ -81,7 +101,7 @@ public class StoryController {
      */
     @RequestMapping("/createChapter")
     public IResult createChapter(@RequestBody JSONObject data){
-        boolean res = storyService.createChapter(data);
+        boolean res = storyNovelService.createChapter(data);
         return res ? IResult.success() : IResult.fail("创建失败",R.CODE_FAIL);
     }
 
@@ -92,7 +112,7 @@ public class StoryController {
      */
     @RequestMapping("/createAndCheckChapter")
     public IResult checkPublishChapter(@RequestBody JSONObject data){
-        storyService.checkPublishChapter(data);
+        storyNovelService.checkPublishChapter(data);
         return IResult.success("发布成功，请稍后刷新审核状态！",null);
     }
 
@@ -106,7 +126,7 @@ public class StoryController {
         int target = data.getIntValue("chapterNum");
         String email = data.getString("email");
         String novelName = data.getString("novelName");
-        JSONObject chapter = storyService.showOneChapter(email,novelName,target);
+        JSONObject chapter = storyNovelService.showOneChapter(email,novelName,target);
         JSONObject object = new JSONObject();
         object.put("chapter",chapter);
         return IResult.success(object);
@@ -121,7 +141,7 @@ public class StoryController {
     public IResult showAllChapters(@RequestBody JSONObject data){
         String authorEmail = data.getString("email");
         String novelName = data.getString("novelName");
-        List<String> result = storyService.showAllChapters(authorEmail, novelName);
+        List<String> result = storyNovelService.showAllChapters(authorEmail, novelName);
         JSONObject object = new JSONObject();
         object.put("chapters",result);
         return IResult.success(object);
@@ -135,7 +155,7 @@ public class StoryController {
     @RequestMapping("/createNovel")
     @ShowArgs
     public IResult createNovel(@RequestBody JSONObject data){
-        int stat = storyService.createNovel(data);
+        int stat = storyNovelService.createNovel(data);
         return stat==1 ? IResult.success("创建成功",null) : IResult.fail("创建失败，请稍后重试",null);
     }
 
@@ -146,7 +166,7 @@ public class StoryController {
      */
     @RequestMapping("/queryNovels")
     public IResult queryNovels(@RequestBody JSONObject data){
-        JSONObject result = storyService.queryNovels(data);
+        JSONObject result = storyNovelService.queryNovels(data);
         return IResult.success(result);
     }
 
@@ -157,7 +177,7 @@ public class StoryController {
      */
     @RequestMapping("/saveChapter")
     public IResult saveChapter(@RequestBody JSONObject data){
-        boolean res = storyService.saveChapter(data);
+        boolean res = storyNovelService.saveChapter(data);
         return res ? IResult.success() : IResult.fail("保存失败",R.CODE_FAIL);
     }
 }
