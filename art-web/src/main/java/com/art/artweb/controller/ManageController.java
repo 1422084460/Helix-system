@@ -7,7 +7,8 @@ import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IResult;
 import com.art.artcreator.service.StoryManageService;
 import com.art.artcreator.service.StoryNovelService;
-import com.art.artmanage.service.ManageService;
+import com.art.artmanage.service.ManageSystemService;
+import com.art.artmanage.service.ManageUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +29,13 @@ public class ManageController {
     @Autowired
     private UserIndividuationService userIndividuationService;
     @Autowired
-    private ManageService manageService;
+    private ManageUserService manageUserService;
     @Autowired
     private StoryManageService storyManageService;
     @Autowired
     private StoryNovelService storyNovelService;
+    @Autowired
+    private ManageSystemService manageSystemService;
 
     /**
      * 修改用户角色权限
@@ -41,7 +44,7 @@ public class ManageController {
      */
     @RequestMapping("/updateModule")
     public IResult updateModule(@RequestBody JSONObject data){
-        boolean update = manageService.updateModule(data);
+        boolean update = manageUserService.updateModule(data);
         return update ? IResult.success() : IResult.fail("权限修改失败，请重试",R.CODE_FAIL);
     }
 
@@ -102,5 +105,16 @@ public class ManageController {
     public IResult helpUpdate(@RequestBody JSONObject data){
         int update = storyManageService.helpUpdate(data);
         return update==1 ? IResult.success() : IResult.fail("修改失败",R.CODE_FAIL);
+    }
+
+    /**
+     * 更新系统日志
+     * @param data 请求数据
+     * @return IResult
+     */
+    @RequestMapping("/updateSystemLog")
+    public IResult updateSystemLog(@RequestBody JSONObject data){
+        int i = manageSystemService.updateSystemLog(data);
+        return i==1 ? IResult.success() : IResult.fail("系统日志添加失败",R.CODE_FAIL);
     }
 }

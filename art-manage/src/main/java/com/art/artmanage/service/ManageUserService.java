@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 
 /**
  * description
- * 后台管理服务
+ * 后台用户管理服务
  * @author lou
  * @create 2022/9/15
  */
 @Service
-public class ManageService {
+public class ManageUserService {
 
     /**
      * 修改用户角色权限
