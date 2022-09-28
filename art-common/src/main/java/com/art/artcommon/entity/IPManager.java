@@ -25,5 +25,5 @@ public class IPManager {
     @TableField
     private int count;
     @TableField
-    private String blacklist;
+    private boolean blacklist;
 }

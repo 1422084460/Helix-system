@@ -86,17 +86,17 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
             IPManager ipManager = new IPManager()
                     .setIp(ip)
                     .setCount(1)
-                    .setBlacklist("false");
+                    .setBlacklist(false);
             ipManagerMapper.insert(ipManager);
-        }else if (one.getCount()<3 && one.getBlacklist().equals("false")){
+        }else if (one.getCount()<3 && !one.isBlacklist()){
             int count = one.getCount();
             int newCount = count+1;
             UpdateWrapper<IPManager> wrapper1 = new UpdateWrapper<>();
             wrapper1.set("count",newCount).eq("ip",ip);
             ipManagerMapper.update(null,wrapper1);
-        }else if (one.getCount()==3 && one.getBlacklist().equals("false")){
+        }else if (one.getCount()==3 && !one.isBlacklist()){
             UpdateWrapper<IPManager> wrapper1 = new UpdateWrapper<>();
-            wrapper1.set("blacklist","true").eq("ip",ip);
+            wrapper1.set("blacklist",true).eq("ip",ip);
             ipManagerMapper.update(null,wrapper1);
             RedisUtil.setHash("blacklist",ip,"true",0,TimeUnit.SECONDS);
         }
