@@ -2,7 +2,7 @@ package com.art.artweb;
 
 import com.art.artcommon.utils.*;
 import com.art.artadmin.handler.Handler;
-import com.art.artweb.async.AsyncTaskMain;
+import com.art.artweb.render.DataRender;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
@@ -25,7 +25,6 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
         initStore();
         initRedis();
         //importData();
-        //doSomethings();//异步调用redis缓存
     }
 
     private void doSomething() throws Exception {
@@ -64,14 +63,15 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
         log.info("store initializes already...");
     }
 
-    private void importData(){
-        InitDataUtils.importDataToRedis();
-        log.info("import data to redis already...");
-    }
-
     @Autowired
-    private AsyncTaskMain task;
-    private void doSomethings(){
-        //task.ddd();
+    private DataRender dataRender;
+
+    /**
+     * 导入数据至 redis
+     */
+    @Order(3)
+    private void importData(){
+        dataRender.start();
+        log.info("import data to redis already...");
     }
 }

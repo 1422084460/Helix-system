@@ -16,7 +16,6 @@ public class Store extends HashMap<String,HashMap<String,Object>> {
      * 不需要单例，但需要考虑保存时的线程安全，即多个用户可能会用同一个key
      * 所以key可以放用户唯一标识即用户id，value放HashMap
      * 多线程并发问题，就是在同一段时间内，多个相同的http请求被创建，一个http请求从开始到结束就是一个线程的生命周期
-     * @return
      */
     public static Store getInstance(){
         return makeStore.store;
