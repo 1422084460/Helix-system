@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.utils.Tools;
 import com.art.artmanage.entity.SystemUpdateLog;
 import com.art.artmanage.mapper.SystemUpdateLogMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * description
@@ -33,5 +36,19 @@ public class ManageSystemService {
                 .setUpdate_details(details)
                 .setUpdate_executor(executor);
         return systemUpdateLogMapper.insert(log);
+    }
+
+    /**
+     * 展示系统更新日志
+     * @param data 请求数据
+     * @return int
+     */
+    public JSONObject showSystemLog(JSONObject data){
+        QueryWrapper<SystemUpdateLog> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("id");
+        List<SystemUpdateLog> logList = systemUpdateLogMapper.selectList(wrapper);
+        JSONObject object = new JSONObject();
+        object.put("systemlog",logList);
+        return object;
     }
 }
