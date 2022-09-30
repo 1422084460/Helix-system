@@ -33,7 +33,7 @@ public class FileController {
             e.printStackTrace();
         }
         JSONObject object = new JSONObject();
-        object.put("file",newFileName);
+        object.put("fileName",newFileName);
         return IResult.success(object);
     }
 }
