@@ -87,7 +87,7 @@ public class StoryNovelService {
         String des = data.getString("details");
         List<String> details = JSON.parseObject(des,new TypeReference<List<String>>(){});
         String createTime = Tools.date_To_Str(timestamp);
-        String chapter_id = Tools.getCode() + timestamp;
+        String chapter_id = Tools.createChapterId();
         List<Chapter.ChapterPara> list = new ArrayList<>();
         for (String de : details){
             Chapter.ChapterPara para = new Chapter().generatePara(de);

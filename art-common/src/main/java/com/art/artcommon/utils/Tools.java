@@ -1,5 +1,6 @@
 package com.art.artcommon.utils;
 
+import cn.hutool.core.date.DatePattern;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.config.EmailConfig;
@@ -368,7 +369,16 @@ public class Tools {
     }
 
     /**
-     * 生成唯一nameId
+     * 生成唯一 chapter_id
+     * @return String
+     */
+    public static String createChapterId(){
+        String s = DatePattern.PURE_DATETIME_FORMAT.format(new Date());
+        return getCode()+"-"+s;
+    }
+
+    /**
+     * 生成唯一 nameId
      * @param name 名
      * @return String
      */
