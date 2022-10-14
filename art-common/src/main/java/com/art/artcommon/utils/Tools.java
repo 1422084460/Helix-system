@@ -4,6 +4,7 @@ import cn.hutool.core.date.DatePattern;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.config.EmailConfig;
+import com.art.artcommon.constant.CustomException;
 import com.art.artcommon.custominterface.AuthL;
 import org.apache.commons.mail.HtmlEmail;
 import org.reflections.Reflections;
@@ -301,22 +302,26 @@ public class Tools {
      * @return boolean
      */
     public static boolean checkIfChapterLegal(List<String> detail){
-        String target = JSON.toJSONString(detail);
-        int count = countParas(detail);
-        if (count<500){
-            return false;
-        }
-        String illegalWordList = RedisUtil.get("Illegal_word_list");
-        String[] arr = illegalWordList
-                .replace("[","")
-                .replace("]","")
-                .split(",");
-        for (String a : arr){
-            if (target.contains(a)){
+        try {
+            String target = JSON.toJSONString(detail);
+            int count = countParas(detail);
+            if (count<500){
                 return false;
             }
+            String illegalWordList = RedisUtil.get("Illegal_word_list");
+            String[] arr = illegalWordList
+                    .replace("[","")
+                    .replace("]","")
+                    .split(",");
+            for (String a : arr){
+                if (target.contains(a)){
+                    return false;
+                }
+            }
+            return true;
+        }catch (Exception e){
+            throw new CustomException("因未知原因审核失败，请稍后重试");
         }
-        return true;
     }
 
     /**
