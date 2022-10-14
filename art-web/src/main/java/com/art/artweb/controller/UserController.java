@@ -16,6 +16,7 @@ import com.art.artcommon.utils.Tools;
 import com.art.artadmin.service.UserAuthService;
 import com.art.artweb.async.AsyncTaskMain;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +40,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/login")
+    @PostMapping("/login")
     @ShowArgs
     public IResult login(@RequestBody JSONObject data){
         String token = "";
@@ -70,7 +71,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/register")
+    @PostMapping("/register")
     @ShowArgs
     public IResult register(@RequestBody JSONObject data){
         String date = Tools.date_To_Str((Long) data.get("timestamp"));
@@ -95,7 +96,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/changePwd")
+    @PostMapping("/changePwd")
     @ShowArgs
     @AuthL
     public IResult changePwd(@RequestBody JSONObject data){
@@ -110,7 +111,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/sendCode")
+    @PostMapping("/sendCode")
     @ShowArgs
     public IResult sendCode(@RequestBody JSONObject data){
         String receiver = data.getString("email");
@@ -123,7 +124,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/verifyCode")
+    @PostMapping("/verifyCode")
     @ShowArgs
     public IResult verifyCode(@RequestBody JSONObject data){
         return userAuthService.verifyCode(data);
@@ -134,7 +135,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/cancelCurrentUser")
+    @PostMapping("/cancelCurrentUser")
     public IResult cancelCurrentUser(@RequestBody JSONObject data){
         return userAuthService.cancelCurrentUser(data);
     }
@@ -144,7 +145,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/signIn")
+    @PostMapping("/signIn")
     public IResult signIn(@RequestBody JSONObject data){
         String email = data.getString("email");
         long timestamp = data.getLong("timestamp");
@@ -159,7 +160,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/getUserPageInfo")
+    @PostMapping("/getUserPageInfo")
     public IResult getUserPageInfo(@RequestBody JSONObject data){
         String email = data.getString("email");
         JSONObject userPage = userPageService.renderUserPage(email);

@@ -9,6 +9,7 @@ import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.service.StoryNameService;
 import com.art.artcreator.service.StoryNovelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/createName")
+    @PostMapping("/createName")
     @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
         try {
@@ -53,7 +54,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/addAdoptedName")
+    @PostMapping("/addAdoptedName")
     @ShowArgs
     public IResult addAdoptedName(@RequestBody JSONObject data) {
         try {
@@ -71,7 +72,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/markForName")
+    @PostMapping("/markForName")
     public IResult markForName(@RequestBody JSONObject data){
         String email = data.getString("email");
         String nameId = data.getString("nameId");
@@ -85,7 +86,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/showNameDetails")
+    @PostMapping("/showNameDetails")
     public IResult showNameDetails(@RequestBody JSONObject data){
         JSONObject res = new JSONObject();
         String nameId = data.getString("nameId");
@@ -99,7 +100,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/createChapter")
+    @PostMapping("/createChapter")
     public IResult createChapter(@RequestBody JSONObject data){
         boolean res = storyNovelService.createChapter(data);
         return res ? IResult.success() : IResult.fail("创建失败",R.CODE_FAIL);
@@ -110,7 +111,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/createAndCheckChapter")
+    @PostMapping("/createAndCheckChapter")
     public IResult checkPublishChapter(@RequestBody JSONObject data){
         storyNovelService.checkPublishChapter(data);
         return IResult.success("发布成功，请稍后刷新审核状态！",null);
@@ -121,7 +122,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/showOneChapter")
+    @PostMapping("/showOneChapter")
     public IResult showOneChapter(@RequestBody JSONObject data){
         int target = data.getIntValue("chapterNum");
         String email = data.getString("email");
@@ -137,7 +138,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/showAllChapters")
+    @PostMapping("/showAllChapters")
     public IResult showAllChapters(@RequestBody JSONObject data){
         String authorEmail = data.getString("email");
         String novelName = data.getString("novelName");
@@ -152,7 +153,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/createNovel")
+    @PostMapping("/createNovel")
     @ShowArgs
     public IResult createNovel(@RequestBody JSONObject data){
         int stat = storyNovelService.createNovel(data);
@@ -164,7 +165,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/queryNovels")
+    @PostMapping("/queryNovels")
     public IResult queryNovels(@RequestBody JSONObject data){
         JSONObject result = storyNovelService.queryNovels(data);
         return IResult.success(result);
@@ -175,7 +176,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
-    @RequestMapping("/saveChapter")
+    @PostMapping("/saveChapter")
     public IResult saveChapter(@RequestBody JSONObject data){
         boolean res = storyNovelService.saveChapter(data);
         return res ? IResult.success() : IResult.fail("保存失败",R.CODE_FAIL);
