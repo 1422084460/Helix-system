@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.entity.IPManager;
 import com.art.artcommon.utils.DBUtils;
+import com.art.artcommon.utils.MongoClient;
 import com.art.artcommon.utils.RedisUtil;
+import com.art.artcreator.mongo.IllegalWords;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 /**
  * description
@@ -57,10 +60,10 @@ public class DataRender {
         });
         CompletableFuture<String> future2 = CompletableFuture.supplyAsync(()->{
             try {
-                doSomething();
+                importIllegalWords();
             } catch (Exception e) {
                 log.error("doSomething ===>>> 发生错误，请查看后台任务！");
-                task.add("doSomething");
+                task.add("importIllegalWords");
             }
             return "ok";
         });
@@ -100,6 +103,17 @@ public class DataRender {
         RedisUtil.pipLine(null,hashCmd);
     }
 
+    /**
+     * 导入非法字符数据
+     */
+    private void importIllegalWords(){
+        MongoClient<IllegalWords> client = new MongoClient<>(IllegalWords.class);
+        List<IllegalWords> list = client.queryAll();
+        List<String> collect = list.stream().map(IllegalWords::getWord).collect(Collectors.toList());
+        RedisUtil.deleteKey("Illegal_word_list");
+        RedisUtil.set("Illegal_word_list",JSON.toJSONString(collect));
+    }
+
     public void doSomething(){}
 
     /**
@@ -114,6 +128,9 @@ public class DataRender {
             List<String> list = new ArrayList<>();
             if (task.contains("importBlackList")) {
                 list.add("importBlackList");
+            }
+            if (task.contains("importIllegalWords")) {
+                list.add("importIllegalWords");
             }
             if (task.contains("doSomething")) {
                 list.add("doSomething");
@@ -137,6 +154,9 @@ public class DataRender {
                 switch (element){
                     case "importBlackList":
                         importBlackList();
+                        break;
+                    case "importIllegalWords":
+                        importIllegalWords();
                         break;
                     case "doSomething":
                         break;
