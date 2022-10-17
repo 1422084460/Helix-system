@@ -12,7 +12,7 @@ import java.io.OutputStream;
 
 @Slf4j
 @Component
-public class FileUpLodeUtil {
+public class FileUtils {
 
     @Value("${upload-file.data.port}")
     private int port;
