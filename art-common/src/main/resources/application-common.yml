@@ -70,7 +70,11 @@ upload-file:
     password: HAPPY142208*.
     ip: 118.31.55.121
     user: root
-    filepath: /usr/local/images/
+    avatarpath: /usr/local/images/
+  pool:
+    max-total: 10
+    max-idle: 10
+    min-idle: 3
 
 python:
   url: 127.0.0.1:9000
