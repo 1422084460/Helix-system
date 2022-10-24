@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.FileOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 
 /**
  * description
@@ -45,32 +46,28 @@ public class FileUtils {
         }
     }
 
-    public void download(String localPath, String localName, String name) throws Exception{
-        InputStream in = getResource(name);
-        OutputStream out = new FileOutputStream(localPath+localName);
-        byte[] buff = new byte[1024 * 2];
-        int read;
-        if (in != null) {
-            do {
-                read = in.read(buff, 0, buff.length);
-                if (read > 0) {
-                    out.write(buff, 0, read);
-                }
-                out.flush();
-            } while (read >= 0);
-        }
-        if (in != null){
+    public void download(HttpServletResponse response, String fileName){
+        try {
+            response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "UTF-8"));
+            InputStream in = getResource(fileName);
+            int len = 0;
+            byte[] buffer = new byte[1024];
+            OutputStream out = response.getOutputStream();
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer,0,len);//将缓冲区的数据输出到客户端浏览器
+            }
             in.close();
-            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private InputStream getResource(String name){
+    private InputStream getResource(String fileName){
         ChannelSftp sftp = null;
         try {
             sftp = pool.borrowObject();
             sftp.cd(filepath);
-            return sftp.get(name);
+            return sftp.get(fileName);
         }catch (Exception e){
             e.printStackTrace();
         }finally {

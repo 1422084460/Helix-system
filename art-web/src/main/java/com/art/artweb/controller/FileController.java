@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/api/file")
 public class FileController {
 
     @Autowired
@@ -41,19 +43,16 @@ public class FileController {
     }
 
     @RequestMapping("/downloadFile")
-    public IResult downloadFile(@RequestBody JSONObject data) {
-        String localPath = data.getString("localPath");
-        String localName = data.getString("localName");
-        String name = data.getString("name");
+    public IResult downloadFile(@RequestBody JSONObject data, HttpServletResponse response) {
         try {
-            fileUtils.download(localPath,localName,name);
+            fileUtils.download(response,data.getString("fileName"));
         }catch (Exception e){
             throw new CustomException("下载失败");
         }
         return IResult.success();
     }
 
-    @PostMapping("/getupLoadFileConfigInfo")
+    @PostMapping("/getFileConfigInfo")
     public String getInfo(){
         return fileUtils.getConfigInfo();
     }
