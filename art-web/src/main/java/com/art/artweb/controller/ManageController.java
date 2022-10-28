@@ -9,6 +9,8 @@ import com.art.artcreator.service.StoryManageService;
 import com.art.artcreator.service.StoryNovelService;
 import com.art.artmanage.service.ManageSystemService;
 import com.art.artmanage.service.ManageUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +25,7 @@ import java.util.List;
  * @author lou
  * @create 2022/9/9
  */
+@Api("后台管理接口")
 @RestController
 @RequestMapping("/api/manage")
 public class ManageController {
@@ -43,6 +46,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("修改用户角色权限")
     @PostMapping("/updateModule")
     public IResult updateModule(@RequestBody JSONObject data){
         boolean update = manageUserService.updateModule(data);
@@ -54,6 +58,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("添加个性装扮")
     @PostMapping("/addPersonalizedDress")
     public IResult addPersonalizedDress(@RequestBody JSONObject data){
         int res = userIndividuationService.addPersonalizedDress(data);
@@ -65,6 +70,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("展示个性装扮")
     @PostMapping("/showPersonalizedDress")
     public IResult showPersonalizedDress(@RequestBody JSONObject data){
         List<PersonalizedDress> res = userIndividuationService.showPersonalizedDress(data);
@@ -78,6 +84,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("再次审核章节")
     @PostMapping("/checkChapter")
     public IResult checkChapter(@RequestBody JSONObject data){
         boolean flag = storyNovelService.checkChapter(data);
@@ -89,6 +96,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("帮助开发者（查询姓、名）")
     @PostMapping("/helpQuery")
     public IResult helpQuery(@RequestBody JSONObject data){
         List list = storyManageService.helpQuery(data);
@@ -102,6 +110,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("帮助开发者（修改姓、名）")
     @PostMapping("/helpUpdate")
     public IResult helpUpdate(@RequestBody JSONObject data){
         int update = storyManageService.helpUpdate(data);
@@ -113,6 +122,7 @@ public class ManageController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("更新系统日志")
     @PostMapping("/updateSystemLog")
     public IResult updateSystemLog(@RequestBody JSONObject data){
         int i = manageSystemService.updateSystemLog(data);

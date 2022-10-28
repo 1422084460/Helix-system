@@ -8,6 +8,8 @@ import com.art.artcommon.entity.PageMaster;
 import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.service.StoryNameService;
 import com.art.artcreator.service.StoryNovelService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * description
+ * 小说管理控制器
+ * @author lou
+ * @create 2022/9/9
+ */
+@Api("小说管理接口")
 @RestController
 @RequestMapping("/api/story")
 public class StoryController {
@@ -30,6 +39,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("创建姓名")
     @PostMapping("/createName")
     @ShowArgs
     public IResult createName(@RequestBody JSONObject data) {
@@ -54,6 +64,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("采用姓名")
     @PostMapping("/addAdoptedName")
     @ShowArgs
     public IResult addAdoptedName(@RequestBody JSONObject data) {
@@ -72,6 +83,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("评分")
     @PostMapping("/markForName")
     public IResult markForName(@RequestBody JSONObject data){
         String email = data.getString("email");
@@ -86,6 +98,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("展示名字详细信息")
     @PostMapping("/showNameDetails")
     public IResult showNameDetails(@RequestBody JSONObject data){
         JSONObject res = new JSONObject();
@@ -100,6 +113,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("创建新章节")
     @PostMapping("/createChapter")
     public IResult createChapter(@RequestBody JSONObject data){
         boolean res = storyNovelService.createChapter(data);
@@ -111,6 +125,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("发布并审核章节")
     @PostMapping("/createAndCheckChapter")
     public IResult checkPublishChapter(@RequestBody JSONObject data){
         storyNovelService.checkPublishChapter(data);
@@ -122,6 +137,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("获取章节")
     @PostMapping("/showOneChapter")
     public IResult showOneChapter(@RequestBody JSONObject data){
         int target = data.getIntValue("chapterNum");
@@ -138,6 +154,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("获取所有章节目录")
     @PostMapping("/showAllChapters")
     public IResult showAllChapters(@RequestBody JSONObject data){
         String authorEmail = data.getString("email");
@@ -153,6 +170,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("创建新内容")
     @PostMapping("/createNovel")
     @ShowArgs
     public IResult createNovel(@RequestBody JSONObject data){
@@ -165,6 +183,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("界面展示")
     @PostMapping("/queryNovels")
     public IResult queryNovels(@RequestBody JSONObject data){
         JSONObject result = storyNovelService.queryNovels(data);
@@ -176,6 +195,7 @@ public class StoryController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("修改并保存内容")
     @PostMapping("/saveChapter")
     public IResult saveChapter(@RequestBody JSONObject data){
         boolean res = storyNovelService.saveChapter(data);

@@ -15,6 +15,7 @@ import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
 import com.art.artadmin.service.UserAuthService;
 import com.art.artweb.async.AsyncTaskMain;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * description
+ * 用户管理控制器
+ * @author lou
+ * @create 2022/9/9
+ */
+@Api("用户管理接口")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -40,6 +48,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("用户登录")
     @PostMapping("/login")
     @ShowArgs
     public IResult login(@RequestBody JSONObject data){
@@ -71,6 +80,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("用户注册")
     @PostMapping("/register")
     @ShowArgs
     public IResult register(@RequestBody JSONObject data){
@@ -96,6 +106,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("密码修改")
     @PostMapping("/changePwd")
     @ShowArgs
     @AuthL
@@ -111,6 +122,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("发送验证码")
     @PostMapping("/sendCode")
     @ShowArgs
     public IResult sendCode(@RequestBody JSONObject data){
@@ -124,6 +136,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("验证验证码")
     @PostMapping("/verifyCode")
     @ShowArgs
     public IResult verifyCode(@RequestBody JSONObject data){
@@ -135,6 +148,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("注销用户")
     @PostMapping("/cancelCurrentUser")
     public IResult cancelCurrentUser(@RequestBody JSONObject data){
         return userAuthService.cancelCurrentUser(data);
@@ -145,6 +159,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("签到")
     @PostMapping("/signIn")
     public IResult signIn(@RequestBody JSONObject data){
         String email = data.getString("email");
@@ -160,6 +175,7 @@ public class UserController {
      * @param data 请求数据
      * @return IResult
      */
+    @ApiOperation("获取用户个人中心页面")
     @PostMapping("/getUserPageInfo")
     public IResult getUserPageInfo(@RequestBody JSONObject data){
         String email = data.getString("email");
