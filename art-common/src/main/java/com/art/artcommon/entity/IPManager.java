@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 
 /**
  * description
- *
+ * IP权限管理类
  * @author lou
  * @create 2022/6/15
  */
