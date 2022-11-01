@@ -3,10 +3,7 @@ package com.art.artweb.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.art.artadmin.dto.CodeValidation;
-import com.art.artadmin.dto.UserBaseInfo;
-import com.art.artadmin.dto.UserInfo;
+import com.art.artadmin.dto.*;
 import com.art.artadmin.service.UserPageService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.AuthL;
@@ -56,7 +53,7 @@ public class UserController {
     @ApiOperation("用户登录")
     @PostMapping("/login")
     @ShowArgs
-    public IResult login(@RequestBody @Valid UserInfo data){
+    public IResult login(@RequestBody @Valid LoginUserInfo data){
         String token = "";
         IResult loginStatus = null;
         if (data.getLogin_mode().equals(R.CODE_LOGIN_WITH_PWD)){
@@ -88,7 +85,7 @@ public class UserController {
     @ApiOperation("用户注册")
     @PostMapping("/register")
     @ShowArgs
-    public IResult register(@RequestBody @Valid UserInfo data){
+    public IResult register(@RequestBody @Valid RegisterUserInfo data){
         String date = Tools.date_To_Str(data.getTimestamp());
         data.setCreate_time(date);
         User user = new User();
@@ -115,7 +112,7 @@ public class UserController {
     @PostMapping("/changePwd")
     @ShowArgs
     @AuthL
-    public IResult changePwd(@RequestBody UserBaseInfo data){
+    public IResult changePwd(@RequestBody SecretUserInfo data){
         int i = userAuthService.changePwd(data.getEmail(), data.getNewPassWord());
         return i==1 ? IResult.success() : IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
@@ -128,7 +125,7 @@ public class UserController {
     @ApiOperation("发送验证码")
     @PostMapping("/sendCode")
     @ShowArgs
-    public IResult sendCode(@RequestBody UserBaseInfo data){
+    public IResult sendCode(@RequestBody SecretUserInfo data){
         task.asyncSendCode(data.getEmail());
         return IResult.success();
     }
@@ -152,7 +149,7 @@ public class UserController {
      */
     @ApiOperation("注销用户")
     @PostMapping("/cancelCurrentUser")
-    public IResult cancelCurrentUser(@RequestBody UserBaseInfo data){
+    public IResult cancelCurrentUser(@RequestBody SecretUserInfo data){
         return userAuthService.cancelCurrentUser(data.getEmail(),data.getTimestamp());
     }
 
@@ -163,7 +160,7 @@ public class UserController {
      */
     @ApiOperation("签到")
     @PostMapping("/signIn")
-    public IResult signIn(@RequestBody UserBaseInfo data){
+    public IResult signIn(@RequestBody SignInUserInfo data){
         int signIn = userPageService.signIn(data.getEmail(),data.getTimestamp(),data.getScore(),data.getSignInCount());
         return signIn==1 ? IResult.success() : IResult.fail("签到失败",R.CODE_FAIL);
     }
@@ -175,7 +172,7 @@ public class UserController {
      */
     @ApiOperation("获取用户个人中心页面")
     @PostMapping("/getUserPageInfo")
-    public IResult getUserPageInfo(@RequestBody UserBaseInfo data){
+    public IResult getUserPageInfo(@RequestBody BaseUserInfo data){
         JSONObject userPage = userPageService.renderUserPage(data.getEmail());
         return IResult.success(userPage);
     }
