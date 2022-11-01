@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.art.artadmin.dto.CodeValidation;
+import com.art.artadmin.dto.UserBaseInfo;
+import com.art.artadmin.dto.UserInfo;
 import com.art.artadmin.service.UserPageService;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.AuthL;
@@ -16,12 +19,14 @@ import com.art.artcommon.utils.Tools;
 import com.art.artadmin.service.UserAuthService;
 import com.art.artweb.async.AsyncTaskMain;
 import io.swagger.annotations.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,17 +56,17 @@ public class UserController {
     @ApiOperation("用户登录")
     @PostMapping("/login")
     @ShowArgs
-    public IResult login(@RequestBody JSONObject data){
+    public IResult login(@RequestBody @Valid UserInfo data){
         String token = "";
         IResult loginStatus = null;
-        if (data.get("login_mode").equals(R.CODE_LOGIN_WITH_PWD)){
-            loginStatus = userAuthService.login(data);
+        if (data.getLogin_mode().equals(R.CODE_LOGIN_WITH_PWD)){
+            loginStatus = userAuthService.login(data.getEmail(),data.getPassword(),data.getTimestamp());
         }else {
-            loginStatus = userAuthService.verifyCode(data);
+            loginStatus = userAuthService.verifyCode(data.getCode(),data.getEmail());
         }
         if (loginStatus.isSuccess()){
             IResult res = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
-            RedisUtil.set("user_auth_" + data.getString("email"),"login",10, TimeUnit.SECONDS);
+            RedisUtil.set("user_auth_" + data.getEmail(),"login",10, TimeUnit.SECONDS);
             if (res.getCode().equals("9101")){
                 Object user = loginStatus.getData().get("user");
                 String s = JSONArray.toJSON(user).toString();
@@ -83,15 +88,15 @@ public class UserController {
     @ApiOperation("用户注册")
     @PostMapping("/register")
     @ShowArgs
-    public IResult register(@RequestBody JSONObject data){
-        String date = Tools.date_To_Str((Long) data.get("timestamp"));
-        data.put("create_time",date);
-        String s = data.toJSONString();
-        User user = JSON.parseObject(s,new TypeReference<User>(){});
+    public IResult register(@RequestBody @Valid UserInfo data){
+        String date = Tools.date_To_Str(data.getTimestamp());
+        data.setCreate_time(date);
+        User user = new User();
+        BeanUtils.copyProperties(data,user);
         int status = userAuthService.register(user);
         if(status==1){
             String[] args = {"username","status","email"};
-            String token = userAuthService.createToken(s, args);
+            String token = userAuthService.createToken(JSON.toJSONString(user), args);
             JSONObject object = new JSONObject();
             object.put("token",token);
             return IResult.success(object);
@@ -110,10 +115,8 @@ public class UserController {
     @PostMapping("/changePwd")
     @ShowArgs
     @AuthL
-    public IResult changePwd(@RequestBody JSONObject data){
-        String email = data.getString("email");
-        String newPwd = data.getString("newPassWord");
-        int i = userAuthService.changePwd(email, newPwd);
+    public IResult changePwd(@RequestBody UserBaseInfo data){
+        int i = userAuthService.changePwd(data.getEmail(), data.getNewPassWord());
         return i==1 ? IResult.success() : IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
 
@@ -125,9 +128,8 @@ public class UserController {
     @ApiOperation("发送验证码")
     @PostMapping("/sendCode")
     @ShowArgs
-    public IResult sendCode(@RequestBody JSONObject data){
-        String receiver = data.getString("email");
-        task.asyncSendCode(receiver);
+    public IResult sendCode(@RequestBody UserBaseInfo data){
+        task.asyncSendCode(data.getEmail());
         return IResult.success();
     }
 
@@ -139,8 +141,8 @@ public class UserController {
     @ApiOperation("验证验证码")
     @PostMapping("/verifyCode")
     @ShowArgs
-    public IResult verifyCode(@RequestBody JSONObject data){
-        return userAuthService.verifyCode(data);
+    public IResult verifyCode(@RequestBody @Valid CodeValidation data){
+        return userAuthService.verifyCode(data.getCode(),data.getEmail());
     }
 
     /**
@@ -150,8 +152,8 @@ public class UserController {
      */
     @ApiOperation("注销用户")
     @PostMapping("/cancelCurrentUser")
-    public IResult cancelCurrentUser(@RequestBody JSONObject data){
-        return userAuthService.cancelCurrentUser(data);
+    public IResult cancelCurrentUser(@RequestBody UserBaseInfo data){
+        return userAuthService.cancelCurrentUser(data.getEmail(),data.getTimestamp());
     }
 
     /**
@@ -161,12 +163,8 @@ public class UserController {
      */
     @ApiOperation("签到")
     @PostMapping("/signIn")
-    public IResult signIn(@RequestBody JSONObject data){
-        String email = data.getString("email");
-        long timestamp = data.getLong("timestamp");
-        int score = data.getIntValue("score");
-        int signInCount = data.getIntValue("signInCount");
-        int signIn = userPageService.signIn(email,timestamp,score,signInCount);
+    public IResult signIn(@RequestBody UserBaseInfo data){
+        int signIn = userPageService.signIn(data.getEmail(),data.getTimestamp(),data.getScore(),data.getSignInCount());
         return signIn==1 ? IResult.success() : IResult.fail("签到失败",R.CODE_FAIL);
     }
 
@@ -177,9 +175,8 @@ public class UserController {
      */
     @ApiOperation("获取用户个人中心页面")
     @PostMapping("/getUserPageInfo")
-    public IResult getUserPageInfo(@RequestBody JSONObject data){
-        String email = data.getString("email");
-        JSONObject userPage = userPageService.renderUserPage(email);
+    public IResult getUserPageInfo(@RequestBody UserBaseInfo data){
+        JSONObject userPage = userPageService.renderUserPage(data.getEmail());
         return IResult.success(userPage);
     }
 }

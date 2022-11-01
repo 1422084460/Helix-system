@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ public class User {
     private Integer id;
     @TableField
     @NotBlank(message = "用户昵称不能为空")
+    @ApiModelProperty(value = "用户昵称")
     private String username;
     @TableField
     @NotBlank(message = "用户邮箱不能为空")

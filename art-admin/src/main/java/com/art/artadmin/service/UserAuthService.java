@@ -81,17 +81,19 @@ public class UserAuthService {
 
     /**
      * 用户登录
-     * @param data 请求数据
+     * @param email 邮箱
+     * @param password 密码
+     * @param timestamp 时间戳
      * @return IResult
      */
-    public IResult login(JSONObject data){
+    public IResult login(String email, String password, long timestamp){
         QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("email",data.getString("email"))
-                .eq("password",Tools.toMd5(data.getString("password")));
+        wrapper.eq("email",email)
+                .eq("password",Tools.toMd5(password));
         User user = userMapper.selectOne(wrapper);
         if (user!=null){
             handler = SpringContextHolder.getBean("directHandler");
-            String date = Tools.date_To_Str(data.getLong("timestamp"));
+            String date = Tools.date_To_Str(timestamp);
             User_log userLog = new User_log()
                     .setUsername(user.getUsername())
                     .setEmail(user.getEmail())
@@ -121,12 +123,11 @@ public class UserAuthService {
 
     /**
      * 验证验证码
-     * @param data 请求数据
+     * @param code 验证码
+     * @param email 邮箱
      * @return IResult
      */
-    public IResult verifyCode(JSONObject data){
-        String code = data.getString("code");
-        String email = data.getString("email");
+    public IResult verifyCode(String code, String email){
         if (RedisUtil.hasHashKey(email,"verifyCode")){
             if (RedisUtil.getHash(email,"verifyCode").equals(code)){
                 return IResult.success();
@@ -138,19 +139,19 @@ public class UserAuthService {
 
     /**
      * 注销当前用户
-     * @param data 请求数据
+     * @param email 邮箱
+     * @param timestamp 时间戳
      * @return IResult
      */
     @Transactional
-    public IResult cancelCurrentUser(JSONObject data){
-        String email = data.getString("email");
+    public IResult cancelCurrentUser(String email, long timestamp){
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("email",email);
         User one = userMapper.selectOne(wrapper);
         String userJson = JSON.toJSONString(one);
         User_cancel cancel = JSON.parseObject(userJson,new TypeReference<User_cancel>(){});
         cancel.setStatus("cancel");
-        String cancel_time = Tools.date_To_Str(data.getLong("timestamp"));
+        String cancel_time = Tools.date_To_Str(timestamp);
         cancel.setCancel_time(cancel_time);
         int insert = cancelMapper.insert(cancel);
         int delete = userMapper.delete(wrapper);
