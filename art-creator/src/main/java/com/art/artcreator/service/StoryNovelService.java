@@ -6,6 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
+import com.art.artcreator.dto.NovelInfo;
 import com.art.artcreator.entity.FirstName;
 import com.art.artcreator.entity.LastName;
 import com.art.artcreator.mapper.ChapterMapper;
@@ -17,6 +18,7 @@ import com.art.artcreator.novel.NovelChapterList;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +50,7 @@ public class StoryNovelService {
     /**
      * 创建新小说
      * @param data 请求数据
-     * @return boolean
+     * @return int
      */
     public int createNewNovel(JSONObject data){
         String email = data.getString("email");
@@ -57,7 +59,6 @@ public class StoryNovelService {
         String novelType = data.getString("novelType");
         String introduction = data.getString("introduction");
         String cover = data.getString("cover");
-        List<String> ids = new ArrayList<>();
         NovelChapterList chapterList = new NovelChapterList()
                 .setEmail(email)
                 .setAuthor_name(authorName)
@@ -65,7 +66,6 @@ public class StoryNovelService {
                 .setCover(cover)
                 .setNovel_type(novelType)
                 .setIntroduction(introduction)
-                .setChapter_ids(ids)
                 .setParas_count(0)
                 .setNovel_score("0")
                 .setPara_current(0);
@@ -74,55 +74,36 @@ public class StoryNovelService {
 
     /**
      * 创建新章节并保存为草稿
-     * @param data 请求数据
-     * @return int
+     * @param timestamp 时间戳
+     * @param email 邮箱
+     * @param novelName 小说名
+     * @param paraCurrent 当前章节
+     * @param chapterName 章节名
+     * @param detail 章节内容
+     * @return boolean
      */
     @Transactional
-    public boolean createChapter(JSONObject data){
-        Long timestamp = data.getLong("timestamp");
-        String email = data.getString("email");
-        String novelName = data.getString("novelName");
-        int paraCurrent = data.getIntValue("paraCurrent");
-        String chapterName = data.getString("chapterName");
-        String des = data.getString("details");
-        List<String> details = JSON.parseObject(des,new TypeReference<List<String>>(){});
+    public boolean createChapter(Long timestamp, String email, String novelName, int paraCurrent, String chapterName, List<Chapter.ChapterPara> detail){
         String createTime = Tools.date_To_Str(timestamp);
         String chapter_id = Tools.createChapterId();
-        List<Chapter.ChapterPara> list = new ArrayList<>();
-        for (String de : details){
-            Chapter.ChapterPara para = new Chapter().generatePara(de);
-            list.add(para);
-        }
-        int count = Tools.countParas(details);
         Chapter chapter = new Chapter()
                 .setEmail(email)
                 .setChapter_id(chapter_id)
                 .setChapterName(chapterName)
-                .setDetail(list)
-                .setCount(count)
+                .setDetail(detail)
+                .setCount(1000)
                 .setCreate_time(createTime)
                 .setStatus(R.STATUS_DRA);
         int stat1 = 0;
-        int stat2 = 0;
         try {
             stat1 = chapterMapper.insert(chapter);
-            QueryWrapper<NovelChapterList> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("novel_name",novelName);
-            NovelChapterList one = novelChapterListMapper.selectOne(queryWrapper);
-            List<String> oldIds = one.getChapter_ids();
-            oldIds.add(chapter_id);
-            UpdateWrapper<NovelChapterList> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.set("chapter_ids",oldIds)
-                    .eq("email",email)
-                    .eq("novel_name",novelName);
-            stat2 = novelChapterListMapper.update(null,queryWrapper);
         }catch (Exception e){
             RedisUtil.set(email+"_"+novelName+"_"+paraCurrent,
                     JSON.toJSONString(chapter),
                     24,
                     TimeUnit.HOURS);//此处逻辑为先查询是否有缓存，如果有则先进行保存
         }
-        return (stat1==1)&&(stat2==1);
+        return stat1==1;
     }
 
     /**
@@ -187,11 +168,10 @@ public class StoryNovelService {
 
     /**
      * 发布并自动审核
-     * @param data 请求数据
+     * @param chapter_id 章节id
      */
-    public void checkPublishChapter(JSONObject data){
+    public void checkPublishChapter(String chapter_id){
         CompletableFuture.supplyAsync(()->{
-            String chapter_id = data.getString("chapter_id");
             QueryWrapper<Chapter> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("chapter_id",chapter_id);
             Chapter chapter = chapterMapper.selectOne(queryWrapper);
@@ -205,7 +185,7 @@ public class StoryNovelService {
             if (res){
                 UpdateWrapper<Chapter> updateWrapper = new UpdateWrapper<>();
                 updateWrapper.set("status",R.STATUS_PUB)
-                        .eq("chapter_id",data.getString("chapter_id"));
+                        .eq("chapter_id",chapter_id);
                 chapterMapper.update(null,updateWrapper);
             }
         });
@@ -240,31 +220,30 @@ public class StoryNovelService {
     }
 
     /**
-     * 创建新内容
+     * 创建新小说
      * @param data 请求数据
      * @return int
      */
-    public int createNovel(JSONObject data){
-        String s = data.toJSONString();
-        NovelChapterList entity = JSON.parseObject(s, new TypeReference<NovelChapterList>(){});
+    public int createNovel(NovelInfo data){
+        NovelChapterList entity = new NovelChapterList();
+        BeanUtils.copyProperties(data,entity);
         return novelChapterListMapper.insert(entity);
     }
 
     /**
-     * 界面展示指定内容
-     * @param data 请求数据
+     * 界面展示指定类型小说
+     * @param novelType 小说类型
+     * @param fuzzyWord 搜索关键词
      * @return JSONObject
      */
-    public JSONObject queryNovels(JSONObject data){
-        String type = data.getString("novelType");
-        String fuzzy = data.getString("fuzzyWord");
+    public JSONObject queryNovels(String novelType, String fuzzyWord){
         QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
-        if (type.equals("0")){
-            wrapper.ne("novelType",type);
+        if (novelType.equals("0")){
+            wrapper.ne("novelType",novelType);
         }else {
-            wrapper.eq("novelType",type);
+            wrapper.eq("novelType",novelType);
         }
-        wrapper.like(!fuzzy.equals(""),"novel_name",fuzzy);
+        wrapper.like(!fuzzyWord.equals(""),"novel_name",fuzzyWord);
         wrapper.groupBy("novel_name");
         List<JSONObject> chapterLists = novelChapterListMapper.queryUniqueChaptersForShow(wrapper);
         JSONObject o = new JSONObject();

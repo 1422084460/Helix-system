@@ -5,6 +5,10 @@ import com.art.artcommon.constant.R;
 import com.art.artcommon.custominterface.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.PageMaster;
+import com.art.artcreator.dto.ChapterInfo;
+import com.art.artcreator.dto.CreatorBaseInfo;
+import com.art.artcreator.dto.NameBaseInfo;
+import com.art.artcreator.dto.NovelInfo;
 import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.service.StoryNameService;
 import com.art.artcreator.service.StoryNovelService;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -42,15 +47,16 @@ public class StoryController {
     @ApiOperation("创建姓名")
     @PostMapping("/createName")
     @ShowArgs
-    public IResult createName(@RequestBody JSONObject data) {
+    public IResult createName(@RequestBody @Valid NameBaseInfo data) {
         try {
-            List<NamePublished> packages = storyNameService.createName(data.getString("area"),
-                    data.getString("category"),
-                    data.getString("style"),
-                    data.getIntValue("first_has_num"),
-                    data.getIntValue("last_has_num"),
-                    data.getBooleanValue("has_inner_name"),
-                    data.getString("email"));
+            List<NamePublished> packages = storyNameService.createName(
+                    data.getArea(),
+                    data.getCategory(),
+                    data.getStyle(),
+                    data.getFirst_has_num(),
+                    data.getLast_has_num(),
+                    data.getHas_inner_name(),
+                    data.getEmail());
             List<Object> finalNameList = storyNameService.getFinalNameList(packages);
             PageMaster res = PageMaster.create(finalNameList,10);
             return IResult.success(res);
@@ -67,14 +73,12 @@ public class StoryController {
     @ApiOperation("采用姓名")
     @PostMapping("/addAdoptedName")
     @ShowArgs
-    public IResult addAdoptedName(@RequestBody JSONObject data) {
+    public IResult addAdoptedName(@RequestBody @Valid CreatorBaseInfo data) {
         try {
-            String queryValue = data.getString("email");
-            String nameId = data.getString("nameId");
-            storyNameService.addAdoptedName(nameId,queryValue);
-            return IResult.success(null);
+            storyNameService.addAdoptedName(data.getNameId(),data.getEmail());
+            return IResult.success();
         }catch (Exception e){
-            return IResult.fail(null,e.getMessage(), R.CODE_FAIL);
+            return IResult.fail(e.getMessage(), R.CODE_FAIL);
         }
     }
 
@@ -85,11 +89,8 @@ public class StoryController {
      */
     @ApiOperation("评分")
     @PostMapping("/markForName")
-    public IResult markForName(@RequestBody JSONObject data){
-        String email = data.getString("email");
-        String nameId = data.getString("nameId");
-        int score = data.getIntValue("score");
-        storyNameService.markForName(nameId,email,score);
+    public IResult markForName(@RequestBody @Valid CreatorBaseInfo data){
+        storyNameService.markForName(data.getNameId(),data.getEmail(),data.getScore());
         return IResult.success();
     }
 
@@ -100,10 +101,9 @@ public class StoryController {
      */
     @ApiOperation("展示名字详细信息")
     @PostMapping("/showNameDetails")
-    public IResult showNameDetails(@RequestBody JSONObject data){
+    public IResult showNameDetails(@RequestBody @Valid CreatorBaseInfo data){
         JSONObject res = new JSONObject();
-        String nameId = data.getString("nameId");
-        JSONObject details = storyNameService.showNameDetails(nameId);
+        JSONObject details = storyNameService.showNameDetails(data.getNameId());
         res.put("details",details);
         return IResult.success(res);
     }
@@ -115,8 +115,15 @@ public class StoryController {
      */
     @ApiOperation("创建新章节")
     @PostMapping("/createChapter")
-    public IResult createChapter(@RequestBody JSONObject data){
-        boolean res = storyNovelService.createChapter(data);
+    public IResult createChapter(@RequestBody @Valid ChapterInfo data){
+        System.out.println(data.getDetail());
+        boolean res = storyNovelService.createChapter(
+                data.getTimestamp(),
+                data.getEmail(),
+                data.getNovelName(),
+                data.getParaCurrent(),
+                data.getChapterName(),
+                data.getDetail());
         return res ? IResult.success() : IResult.fail("创建失败",R.CODE_FAIL);
     }
 
@@ -127,8 +134,8 @@ public class StoryController {
      */
     @ApiOperation("发布并审核章节")
     @PostMapping("/createAndCheckChapter")
-    public IResult checkPublishChapter(@RequestBody JSONObject data){
-        storyNovelService.checkPublishChapter(data);
+    public IResult checkPublishChapter(@RequestBody ChapterInfo data){
+        storyNovelService.checkPublishChapter(data.getChapter_id());
         return IResult.success("发布成功，请稍后刷新审核状态！",null);
     }
 
@@ -139,11 +146,8 @@ public class StoryController {
      */
     @ApiOperation("获取章节")
     @PostMapping("/showOneChapter")
-    public IResult showOneChapter(@RequestBody JSONObject data){
-        int target = data.getIntValue("chapterNum");
-        String email = data.getString("email");
-        String novelName = data.getString("novelName");
-        JSONObject chapter = storyNovelService.showOneChapter(email,novelName,target);
+    public IResult showOneChapter(@RequestBody ChapterInfo data){
+        JSONObject chapter = storyNovelService.showOneChapter(data.getEmail(),data.getNovelName(),data.getParaCurrent());
         JSONObject object = new JSONObject();
         object.put("chapter",chapter);
         return IResult.success(object);
@@ -156,37 +160,35 @@ public class StoryController {
      */
     @ApiOperation("获取所有章节目录")
     @PostMapping("/showAllChapters")
-    public IResult showAllChapters(@RequestBody JSONObject data){
-        String authorEmail = data.getString("email");
-        String novelName = data.getString("novelName");
-        List<String> result = storyNovelService.showAllChapters(authorEmail, novelName);
+    public IResult showAllChapters(@RequestBody ChapterInfo data){
+        List<String> result = storyNovelService.showAllChapters(data.getEmail(), data.getNovelName());
         JSONObject object = new JSONObject();
         object.put("chapters",result);
         return IResult.success(object);
     }
 
     /**
-     * 创建新内容
+     * 创建新小说
      * @param data 请求数据
      * @return IResult
      */
     @ApiOperation("创建新内容")
     @PostMapping("/createNovel")
     @ShowArgs
-    public IResult createNovel(@RequestBody JSONObject data){
+    public IResult createNovel(@RequestBody @Valid NovelInfo data){
         int stat = storyNovelService.createNovel(data);
         return stat==1 ? IResult.success("创建成功",null) : IResult.fail("创建失败，请稍后重试",null);
     }
 
     /**
-     * 界面展示指定内容
+     * 界面展示指定类型小说
      * @param data 请求数据
      * @return IResult
      */
     @ApiOperation("界面展示")
     @PostMapping("/queryNovels")
-    public IResult queryNovels(@RequestBody JSONObject data){
-        JSONObject result = storyNovelService.queryNovels(data);
+    public IResult queryNovels(@RequestBody NovelInfo data){
+        JSONObject result = storyNovelService.queryNovels(data.getNovel_type(),data.getFuzzyWord());
         return IResult.success(result);
     }
 
