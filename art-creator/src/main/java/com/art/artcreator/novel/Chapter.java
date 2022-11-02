@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -24,12 +28,16 @@ public class Chapter {
     @TableId(type = IdType.AUTO)
     private Integer id;
     @TableField
+    @NotBlank(message = "邮箱不能为空")
     private String email;
     @TableField
+    @NotBlank(message = "章节id不能为空")
     private String chapter_id;
     @TableField
+    @NotBlank(message = "章节名不能为空")
     private String chapterName;
     @TableField(typeHandler = FastjsonTypeHandler.class)
+    @NotNull(message = "段落内容必填")
     private List<ChapterPara> detail;
     @TableField
     private Integer count;
@@ -39,8 +47,11 @@ public class Chapter {
     private String status;
 
     @Data
-    public class ChapterPara {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ChapterPara {
 
+        private Integer location;
         private String para;
     }
 

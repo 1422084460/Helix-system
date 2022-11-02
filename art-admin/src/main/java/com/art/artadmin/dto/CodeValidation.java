@@ -1,6 +1,8 @@
 package com.art.artadmin.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotBlank;
  * @create 2022/10/31
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CodeValidation {
 
     @NotBlank(message = "邮箱不能为空")

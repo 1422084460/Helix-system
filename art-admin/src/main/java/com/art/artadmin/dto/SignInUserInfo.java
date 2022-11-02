@@ -1,6 +1,7 @@
 package com.art.artadmin.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * description
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
  * @author lou
  * @create 2022/11/1
  */
+@NoArgsConstructor
 @AllArgsConstructor
 public class SignInUserInfo extends BaseUserInfo{
 

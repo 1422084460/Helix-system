@@ -2,6 +2,7 @@ package com.art.artadmin.dto;
 
 import com.art.artadmin.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
  * @author lou
  * @create 2022/11/1
  */
+@NoArgsConstructor
 @AllArgsConstructor
 public class RegisterUserInfo extends User {
 
