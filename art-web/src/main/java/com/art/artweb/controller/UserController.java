@@ -112,7 +112,7 @@ public class UserController {
     @PostMapping("/changePwd")
     @ShowArgs
     @AuthL
-    public IResult changePwd(@RequestBody SecretUserInfo data){
+    public IResult changePwd(@RequestBody @Valid SecretUserInfo data){
         int i = userAuthService.changePwd(data.getEmail(), data.getNewPassWord());
         return i==1 ? IResult.success() : IResult.fail("密码修改失败，请重试",R.CODE_FAIL);
     }
@@ -125,7 +125,7 @@ public class UserController {
     @ApiOperation("发送验证码")
     @PostMapping("/sendCode")
     @ShowArgs
-    public IResult sendCode(@RequestBody SecretUserInfo data){
+    public IResult sendCode(@RequestBody @Valid SecretUserInfo data){
         task.asyncSendCode(data.getEmail());
         return IResult.success();
     }
@@ -149,7 +149,7 @@ public class UserController {
      */
     @ApiOperation("注销用户")
     @PostMapping("/cancelCurrentUser")
-    public IResult cancelCurrentUser(@RequestBody SecretUserInfo data){
+    public IResult cancelCurrentUser(@RequestBody @Valid SecretUserInfo data){
         return userAuthService.cancelCurrentUser(data.getEmail(),data.getTimestamp());
     }
 
@@ -160,7 +160,7 @@ public class UserController {
      */
     @ApiOperation("签到")
     @PostMapping("/signIn")
-    public IResult signIn(@RequestBody SignInUserInfo data){
+    public IResult signIn(@RequestBody @Valid SignInUserInfo data){
         int signIn = userPageService.signIn(data.getEmail(),data.getTimestamp(),data.getScore(),data.getSignInCount());
         return signIn==1 ? IResult.success() : IResult.fail("签到失败",R.CODE_FAIL);
     }
@@ -172,7 +172,7 @@ public class UserController {
      */
     @ApiOperation("获取用户个人中心页面")
     @PostMapping("/getUserPageInfo")
-    public IResult getUserPageInfo(@RequestBody BaseUserInfo data){
+    public IResult getUserPageInfo(@RequestBody @Valid BaseUserInfo data){
         JSONObject userPage = userPageService.renderUserPage(data.getEmail());
         return IResult.success(userPage);
     }
