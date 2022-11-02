@@ -1,6 +1,7 @@
 package com.art.artadmin.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotBlank;
  * @create 2022/10/28
  */
 @AllArgsConstructor
+@NoArgsConstructor
 public class LoginUserInfo extends BaseUserInfo {
 
     @NotBlank(message = "登录方式不能为空")
