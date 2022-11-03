@@ -11,6 +11,7 @@ import com.art.artcreator.dto.NameBaseInfo;
 import com.art.artcreator.dto.NovelInfo;
 import com.art.artcreator.mongo.NamePublished;
 import com.art.artcreator.service.StoryNameService;
+import com.art.artcreator.service.StoryNovelPageService;
 import com.art.artcreator.service.StoryNovelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * description
@@ -38,6 +40,8 @@ public class StoryController {
     private StoryNameService storyNameService;
     @Autowired
     private StoryNovelService storyNovelService;
+    @Autowired
+    private StoryNovelPageService storyNovelPageService;
 
     /**
      * 创建姓名
@@ -202,5 +206,19 @@ public class StoryController {
     public IResult saveChapter(@RequestBody JSONObject data){
         boolean res = storyNovelService.saveChapter(data);
         return res ? IResult.success() : IResult.fail("保存失败",R.CODE_FAIL);
+    }
+
+    /**
+     * 展示首页小说各类排行榜
+     * @param data 请求数据
+     * @return IResult
+     */
+    @ApiOperation("展示小说排行榜")
+    @PostMapping("/showNovelsRank")
+    public IResult showNovelsRank(@RequestBody JSONObject data){
+        JSONObject object = new JSONObject();
+        Set<String> result = storyNovelPageService.showNovelsRank(data.getString("sortMode"), data.getBooleanValue("asc"));
+        object.put("set",result);
+        return IResult.success(object);
     }
 }

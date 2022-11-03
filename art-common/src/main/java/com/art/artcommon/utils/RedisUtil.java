@@ -133,8 +133,12 @@ public class RedisUtil {
      * @param end 下标结束（-1表示到最后）
      * @return Set<String>
      */
-    public static Set<String> getZSetValues(String key, long start, long end){
-        return redisTemplate.opsForZSet().range(key, start, end);
+    public static Set<String> getZSetValues(String key, long start, long end, boolean asc){
+        if (asc){
+            return redisTemplate.opsForZSet().range(key, start, end);
+        }else {
+            return redisTemplate.opsForZSet().reverseRange(key, start, end);
+        }
     }
 
     /**

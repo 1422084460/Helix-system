@@ -14,7 +14,7 @@ import com.art.artcreator.mapper.FirstNameMapper;
 import com.art.artcreator.mapper.LastNameMapper;
 import com.art.artcreator.mapper.NovelChapterListMapper;
 import com.art.artcreator.novel.Chapter;
-import com.art.artcreator.novel.NovelChapterList;
+import com.art.artcreator.novel.Novel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,7 @@ public class StoryNovelService {
         String novelType = data.getString("novelType");
         String introduction = data.getString("introduction");
         String cover = data.getString("cover");
-        NovelChapterList chapterList = new NovelChapterList()
+        Novel chapterList = new Novel()
                 .setEmail(email)
                 .setAuthor_name(authorName)
                 .setNovel_name(novelName)
@@ -114,7 +114,7 @@ public class StoryNovelService {
      * @return JSONObject
      */
     public JSONObject showOneChapter(String email,String novelName,int target){
-        QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+        QueryWrapper<Novel> wrapper = new QueryWrapper<>();
         wrapper.eq("b.email",email)
                 .eq("b.novel_name",novelName)
                 .eq("b.para_current",target)
@@ -132,7 +132,7 @@ public class StoryNovelService {
     public List<String> showAllChapters(String email,String novelName){
         List<String> stringList = null;
         if (!RedisUtil.hasKey(email+"_"+novelName+"_cL")) {
-            QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+            QueryWrapper<Novel> wrapper = new QueryWrapper<>();
             wrapper.eq("b.email",email)
                     .eq("b.novel_name",novelName)
                     .eq("a.status",R.STATUS_PUB)
@@ -225,7 +225,7 @@ public class StoryNovelService {
      * @return int
      */
     public int createNovel(NovelInfo data){
-        NovelChapterList entity = new NovelChapterList();
+        Novel entity = new Novel();
         BeanUtils.copyProperties(data,entity);
         return novelChapterListMapper.insert(entity);
     }
@@ -237,7 +237,7 @@ public class StoryNovelService {
      * @return JSONObject
      */
     public JSONObject queryNovels(String novelType, String fuzzyWord){
-        QueryWrapper<NovelChapterList> wrapper = new QueryWrapper<>();
+        QueryWrapper<Novel> wrapper = new QueryWrapper<>();
         if (novelType.equals("0")){
             wrapper.ne("novelType",novelType);
         }else {

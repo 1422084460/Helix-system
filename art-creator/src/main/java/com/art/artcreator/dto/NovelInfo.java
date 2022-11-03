@@ -1,6 +1,6 @@
 package com.art.artcreator.dto;
 
-import com.art.artcreator.novel.NovelChapterList;
+import com.art.artcreator.novel.Novel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class NovelInfo extends NovelChapterList {
+public class NovelInfo extends Novel {
 
     private String fuzzyWord;
 

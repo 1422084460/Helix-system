@@ -18,7 +18,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @TableName("Story_NovelChapterList")
 @Accessors(chain = true)
-public class NovelChapterList {
+public class Novel {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -36,6 +36,8 @@ public class NovelChapterList {
     private String novel_type;
     @TableField
     private String novel_score;
+    @TableField
+    private String novel_popularity;
     @TableField
     @NotBlank(message = "简介不能为空")
     private String introduction;
