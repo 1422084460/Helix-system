@@ -10,6 +10,7 @@ import com.art.artcommon.utils.RedisUtil;
 import com.art.artcreator.mongo.IllegalWords;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public class DataRender {
 
     @Autowired
     private DBUtils dbUtils;
+    @Value("${dataRender.IllegalWords}")
+    private boolean IF_NEED_UPDATE_ILLEGAL_WORDS;
 
     /**
      * 待执行的任务链表
@@ -62,7 +65,7 @@ public class DataRender {
             try {
                 importIllegalWords();
             } catch (Exception e) {
-                log.error("doSomething ===>>> 发生错误，请查看后台任务！");
+                log.error("importIllegalWords ===>>> 发生错误，请查看后台任务！");
                 task.add("importIllegalWords");
             }
             return "ok";
@@ -107,11 +110,13 @@ public class DataRender {
      * 导入非法字符数据
      */
     private void importIllegalWords(){
-        MongoClient<IllegalWords> client = new MongoClient<>(IllegalWords.class);
-        List<IllegalWords> list = client.queryAll();
-        List<String> collect = list.stream().map(IllegalWords::getWord).collect(Collectors.toList());
-        RedisUtil.deleteKey("Illegal_word_list");
-        RedisUtil.set("Illegal_word_list",JSON.toJSONString(collect));
+        if (IF_NEED_UPDATE_ILLEGAL_WORDS){
+            MongoClient<IllegalWords> client = new MongoClient<>(IllegalWords.class);
+            List<IllegalWords> list = client.queryAll();
+            List<String> collect = list.stream().map(IllegalWords::getWord).collect(Collectors.toList());
+            RedisUtil.deleteKey("Illegal_word_list");
+            RedisUtil.set("Illegal_word_list",JSON.toJSONString(collect));
+        }
     }
 
     public void doSomething(){}

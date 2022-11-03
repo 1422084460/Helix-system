@@ -21,6 +21,9 @@ task:
     keepAliveSeconds: 300
     queueCapacity: 10
 
+dataRender:
+  IllegalWords: false
+
 dev-pattern:
   devInfo: debug
   #devInfo: production
