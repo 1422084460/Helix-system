@@ -1,6 +1,5 @@
 package com.art.artcommon.utils;
 
-import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
