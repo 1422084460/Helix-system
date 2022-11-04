@@ -1,5 +1,6 @@
 package com.art.artcommon.utils;
 
+import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -263,23 +264,31 @@ public class RedisUtil {
      * @param setCmd 普通键值对集合
      * @param hashCmd hash键值对集合
      */
-    public static void pipLine(Map<String,String> setCmd, Map<String,Map<String,String>> hashCmd){
+    public static void pipLine(Map<String,String> setCmd, Map<String,Map<String,String>> hashCmd, Map<String,Map<Double,String>> zSetCmd){
         if (!hasKey("isPipAlready") || "false".equals(get("isInitAlready"))){
             redisTemplate.executePipelined((RedisCallback<String>) connection -> {
                 connection.openPipeline();
                 connection.set("isInitAlready".getBytes(),"true".getBytes());
-                if (setCmd!=null){
+                if (setCmd != null){
                     setCmd.forEach((key,value)->{
                         connection.set(key.getBytes(),value.getBytes());
                     });
                 }
-                if (hashCmd!=null){
+                if (hashCmd != null){
                     hashCmd.forEach((key,map)->{
                         map.forEach((f,v)->{
                             connection.hashCommands().hSet(key.getBytes(),f.getBytes(),v.getBytes());
                         });
                     });
                 }
+                if (zSetCmd != null){
+                    zSetCmd.forEach((key,map)->{
+                        map.forEach((s,v)->{
+                            connection.zSetCommands().zAdd(key.getBytes(),s,v.getBytes());
+                        });
+                    });
+                }
+                connection.close();
                 return null;
             },redisTemplate.getStringSerializer());
         }
