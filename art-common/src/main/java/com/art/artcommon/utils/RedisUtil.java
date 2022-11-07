@@ -263,7 +263,7 @@ public class RedisUtil {
      * @param setCmd 普通键值对集合
      * @param hashCmd hash键值对集合
      */
-    public static void pipLine(Map<String,String> setCmd, Map<String,Map<String,String>> hashCmd, Map<String,Map<Double,String>> zSetCmd){
+    public static void pipLine(Map<String,String> setCmd, Map<String,Map<String,String>> hashCmd, Map<String,Map<String,Double>> zSetCmd){
         if (!hasKey("isPipAlready") || "false".equals(get("isInitAlready"))){
             redisTemplate.executePipelined((RedisCallback<String>) connection -> {
                 connection.openPipeline();
@@ -282,7 +282,7 @@ public class RedisUtil {
                 }
                 if (zSetCmd != null){
                     zSetCmd.forEach((key,map)->{
-                        map.forEach((s,v)->{
+                        map.forEach((v,s)->{
                             connection.zSetCommands().zAdd(key.getBytes(),s,v.getBytes());
                         });
                     });
