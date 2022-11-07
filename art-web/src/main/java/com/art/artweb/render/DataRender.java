@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -82,11 +81,6 @@ public class DataRender {
         });
         CompletableFuture<String> future3 = CompletableFuture.supplyAsync(()->{
             try {
-                try {
-                    TimeUnit.SECONDS.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 importNovelRank();
                 log.info("importNovelRank ok");
             } catch (Exception e) {
@@ -155,11 +149,11 @@ public class DataRender {
         Map<String,Map<String,Double>> zSetCmd = new HashMap<>();
         for (Novel n : list){
             if (column.equals("novel_score")){
-                innerMap.put(n.getNovel_name(),Double.parseDouble(n.getNovel_score()));
+                innerMap.put(JSON.toJSONString(n),Double.parseDouble(n.getNovel_score()));
             }else if (column.equals("novel_popularity")){
-                innerMap.put(n.getNovel_name(),Double.parseDouble(n.getNovel_popularity()));
+                innerMap.put(JSON.toJSONString(n),Double.parseDouble(n.getNovel_popularity()));
             }else {
-                innerMap.put(n.getNovel_name(),Double.parseDouble(""+n.getParas_count()));
+                innerMap.put(JSON.toJSONString(n),Double.parseDouble(""+n.getParas_count()));
             }
         }
         zSetCmd.put(key,innerMap);
