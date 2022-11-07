@@ -4,6 +4,12 @@ package com.art.artcommon.constant;
  *  定义常量
  */
 public class R {
+
+    /**
+     * 一般常量
+     */
+    public static final String RENDER_LOCK = "RENDER_LOCK";
+
     /**
      * 结果相关
      */

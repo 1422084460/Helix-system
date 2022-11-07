@@ -26,6 +26,10 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
 
+        if (Store.getInstance().containsKey(R.RENDER_LOCK)){
+            throw new CustomException(R.CODE_FAIL, "访问受限");
+        }
+
         String ip = Tools.getIpAddr(request);
         if (!ifInBlackList(ip)) {
             if (!RedisUtil.hasKey(ip+"_access")){

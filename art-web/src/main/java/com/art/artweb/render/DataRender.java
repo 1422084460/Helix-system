@@ -3,11 +3,14 @@ package com.art.artweb.render;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IPManager;
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.DBUtils;
 import com.art.artcommon.utils.MongoClient;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcreator.mongo.IllegalWords;
+import com.art.artcreator.novel.Novel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +39,10 @@ public class DataRender {
     private DBUtils dbUtils;
     @Value("${dataRender.IllegalWords}")
     private boolean IF_NEED_UPDATE_ILLEGAL_WORDS;
+
+    private static final String RANK_KEY_1 = "Novel_Score_Rank";
+    private static final String RANK_KEY_2 = "Novel_Popularity_Rank";
+    private static final String RANK_KEY_3 = "Novel_Counts_Rank";
 
     /**
      * 待执行的任务链表
@@ -55,6 +63,7 @@ public class DataRender {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(()->{
             try {
                 importBlackList();
+                log.info("importBlackList ok");
             } catch (Exception e) {
                 log.error("importBlackList ===>>> 发生错误，请查看后台任务！");
                 task.add("importBlackList");
@@ -64,6 +73,7 @@ public class DataRender {
         CompletableFuture<String> future2 = CompletableFuture.supplyAsync(()->{
             try {
                 importIllegalWords();
+                log.info("importIllegalWords ok");
             } catch (Exception e) {
                 log.error("importIllegalWords ===>>> 发生错误，请查看后台任务！");
                 task.add("importIllegalWords");
@@ -72,10 +82,16 @@ public class DataRender {
         });
         CompletableFuture<String> future3 = CompletableFuture.supplyAsync(()->{
             try {
-                doSomething();
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                importNovelRank();
+                log.info("importNovelRank ok");
             } catch (Exception e) {
-                log.error("doSomething ===>>> 发生错误，请查看后台任务！");
-                task.add("doSomething");
+                log.error("importNovelRank ===>>> 发生错误，请查看后台任务！");
+                task.add("importNovelRank");
             }
             return "ok";
         });
@@ -83,7 +99,9 @@ public class DataRender {
             if (e!=null){
                 e.printStackTrace();
             }
-            log.info("success");
+            //此处解锁项目访问权限
+            Store.getInstance().remove(R.RENDER_LOCK);
+            log.info("unlock... and import: success!");
         });
     }
 
@@ -103,7 +121,7 @@ public class DataRender {
         }
         hashCmd.put("blacklist",map);
         RedisUtil.deleteKey("blacklist");
-        RedisUtil.pipLine(null,hashCmd);
+        RedisUtil.pipLine(null,hashCmd,null);
     }
 
     /**
@@ -119,7 +137,34 @@ public class DataRender {
         }
     }
 
-    public void doSomething(){}
+    /**
+     * 导入小说排行榜
+     */
+    public void importNovelRank(){
+        cachedRank("novel_score",RANK_KEY_1);
+        cachedRank("novel_popularity",RANK_KEY_2);
+        cachedRank("paras_count",RANK_KEY_3);
+    }
+
+    private void cachedRank(String column,String key){
+        RedisUtil.deleteKey(key);
+        String sql = String.format("select * from Story_NovelChapterList order by %s limit 20",column);
+        String result = dbUtils.executeSql(sql);
+        List<Novel> list = JSON.parseObject(result, new TypeReference<List<Novel>>(){});
+        Map<String,Double> innerMap = new HashMap<>();
+        Map<String,Map<String,Double>> zSetCmd = new HashMap<>();
+        for (Novel n : list){
+            if (column.equals("novel_score")){
+                innerMap.put(n.getNovel_name(),Double.parseDouble(n.getNovel_score()));
+            }else if (column.equals("novel_popularity")){
+                innerMap.put(n.getNovel_name(),Double.parseDouble(n.getNovel_popularity()));
+            }else {
+                innerMap.put(n.getNovel_name(),Double.parseDouble(""+n.getParas_count()));
+            }
+        }
+        zSetCmd.put(key,innerMap);
+        RedisUtil.pipLine(null,null,zSetCmd);
+    }
 
     /**
      * 获取当前剩余任务

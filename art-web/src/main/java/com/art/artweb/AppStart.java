@@ -1,5 +1,6 @@
 package com.art.artweb;
 
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.*;
 import com.art.artadmin.handler.Handler;
 import com.art.artweb.render.DataRender;
@@ -22,7 +23,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
     @SneakyThrows
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        initStore();
+        //initStore();
         initRedis();
         //importData();
     }
@@ -47,7 +48,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
             Map<String,String> map = new HashMap<>();
             String email = "getEmail";
             map.put("test",email);
-            RedisUtil.pipLine(map,null);
+            RedisUtil.pipLine(map,null,null);
         }
         if (!RedisUtil.hasKey("user_log_queue_sync_finished")){
             RedisUtil.set("user_log_queue_sync_finished","false");
@@ -60,6 +61,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
      */
     @Order(1)
     private void initStore(){
+        Store.init();
         log.info("store initializes already...");
     }
 

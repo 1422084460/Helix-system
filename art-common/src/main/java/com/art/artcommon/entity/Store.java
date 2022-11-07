@@ -1,10 +1,12 @@
 package com.art.artcommon.entity;
 
+import com.art.artcommon.constant.R;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 
+@Slf4j
 public class Store extends HashMap<String,HashMap<String,Object>> {
-
-    private volatile static Store store = null;
 
     private Store(){}
 
@@ -21,17 +23,14 @@ public class Store extends HashMap<String,HashMap<String,Object>> {
         return makeStore.store;
     }
 
+    public static Store init(){
+        makeStore.store.put(R.RENDER_LOCK,null);
+        return makeStore.store;
+    }
+
     public HashMap<String, Object> MainDataPut(String k,Object v){
         HashMap<String, Object> map = new HashMap<>();
         map.put(k,v);
         return map;
-    }
-
-    public boolean hasKey(String key){
-        return store.get(key) != null;
-    }
-
-    public boolean hasInnerKey(String key,String innerKey){
-        return store.get(key).get(innerKey) != null;
     }
 }
