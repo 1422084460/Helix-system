@@ -81,7 +81,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.3.7.RELEASE</version>
                 <configuration>
-                    <mainClass>com.art.artweb.ArtWebApplication</mainClass>
+                    <mainClass>com.art.artweb.HelixApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>

@@ -16,10 +16,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan(basePackages = {"com.art"})
 @EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan(basePackages = {"com.art.**.mapper"})
-public class ArtWebApplication {
+public class HelixApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ArtWebApplication.class, args);
+        SpringApplication.run(HelixApplication.class, args);
     }
 
 }
