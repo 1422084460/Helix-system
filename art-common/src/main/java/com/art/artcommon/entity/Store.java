@@ -5,27 +5,39 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 
+/**
+ * description
+ * 全局缓存类
+ * @author lou
+ * @create 2022/11/9
+ */
 @Slf4j
 public class Store extends HashMap<String,HashMap<String,Object>> {
 
+    /**
+     * 构造方法
+     */
     private Store(){}
 
-    private static class makeStore{
+    /**
+     * 静态内部类
+     */
+    private static class createStore{
         private static final Store store = new Store();
     }
 
     /**
-     * 不需要单例，但需要考虑保存时的线程安全，即多个用户可能会用同一个key
-     * 所以key可以放用户唯一标识即用户id，value放HashMap
-     * 多线程并发问题，就是在同一段时间内，多个相同的http请求被创建，一个http请求从开始到结束就是一个线程的生命周期
+     * 获取 Store
      */
     public static Store getInstance(){
-        return makeStore.store;
+        return createStore.store;
     }
 
-    public static Store init(){
-        makeStore.store.put(R.RENDER_LOCK,null);
-        return makeStore.store;
+    /**
+     * 初始化 Store
+     */
+    public static void init(){
+        createStore.store.put(R.RENDER_LOCK,null);
     }
 
     public HashMap<String, Object> MainDataPut(String k,Object v){
