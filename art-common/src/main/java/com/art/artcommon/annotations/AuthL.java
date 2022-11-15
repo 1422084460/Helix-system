@@ -1,4 +1,4 @@
-package com.art.artcommon.custominterface;
+package com.art.artcommon.annotations;
 
 import com.art.artcommon.constant.R;
 

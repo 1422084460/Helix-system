@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.config.EmailConfig;
 import com.art.artcommon.constant.CustomException;
-import com.art.artcommon.custominterface.AuthL;
+import com.art.artcommon.annotations.AuthL;
 import org.apache.commons.mail.HtmlEmail;
 import org.reflections.Reflections;
 import org.springframework.util.DigestUtils;

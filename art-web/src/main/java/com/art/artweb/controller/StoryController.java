@@ -2,7 +2,7 @@ package com.art.artweb.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.constant.R;
-import com.art.artcommon.custominterface.ShowArgs;
+import com.art.artcommon.annotations.ShowArgs;
 import com.art.artcommon.entity.IResult;
 import com.art.artcommon.entity.PageMaster;
 import com.art.artcreator.dto.ChapterInfo;

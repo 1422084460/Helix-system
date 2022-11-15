@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 public class AllAspect {
     //考虑用around环绕建立锁，前置解锁，后置上锁
 
-    @Pointcut("@annotation(com.art.artcommon.custominterface.Error)")
+    @Pointcut("@annotation(com.art.artcommon.annotations.Error)")
     public void cutError(){}
 
     @Before("cutError()")
@@ -39,7 +39,7 @@ public class AllAspect {
 //        TaskExe taskExe = method.getAnnotation(TaskExe.class);
 //        String name = taskExe.name();
 //        System.out.println("后置通知"+name);
-//    }
+//    }多线程异步任务提交框架，submit方法，
 
     private String handlerError(HttpServletRequest req){
         return req.getRequestURI();

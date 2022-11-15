@@ -1,13 +1,13 @@
-package com.art.artcommon.custominterface;
+package com.art.artcommon.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE,ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Error {
+public @interface ShowArgs {
 
     String name() default "";
 }

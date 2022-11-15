@@ -1,7 +1,7 @@
 package com.art.artcommon.aspect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art.artcommon.custominterface.Cached;
+import com.art.artcommon.annotations.Cached;
 import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.AopTargetUtils;
 import org.aspectj.lang.JoinPoint;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class CustomCachedAspect {
 
-    @Pointcut("@annotation(com.art.artcommon.custominterface.Cached)")
+    @Pointcut("@annotation(com.art.artcommon.annotations.Cached)")
     public void cached(){}
 
     /**

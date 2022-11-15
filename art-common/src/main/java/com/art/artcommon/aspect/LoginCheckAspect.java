@@ -3,7 +3,7 @@ package com.art.artcommon.aspect;
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.constant.CustomException;
 import com.art.artcommon.constant.R;
-import com.art.artcommon.custominterface.AuthL;
+import com.art.artcommon.annotations.AuthL;
 import com.art.artcommon.utils.AopTargetUtils;
 import com.art.artcommon.utils.RedisUtil;
 import org.aspectj.lang.JoinPoint;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginCheckAspect {
 
-    @Pointcut("@annotation(com.art.artcommon.custominterface.AuthL)")
+    @Pointcut("@annotation(com.art.artcommon.annotations.AuthL)")
     public void auth(){}
 
     @Before("auth()")

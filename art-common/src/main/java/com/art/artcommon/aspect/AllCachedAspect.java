@@ -1,7 +1,7 @@
 package com.art.artcommon.aspect;
 
 import com.alibaba.fastjson.JSONObject;
-import com.art.artcommon.custominterface.CachedTable;
+import com.art.artcommon.annotations.CachedTable;
 import com.art.artcommon.utils.AopTargetUtils;
 import com.art.artcommon.utils.DBUtils;
 import com.art.artcommon.utils.RedisUtil;
@@ -32,7 +32,7 @@ public class AllCachedAspect {
     @Autowired
     private DBUtils dbUtils;
 
-    @Pointcut("@annotation(com.art.artcommon.custominterface.CachedTable)")
+    @Pointcut("@annotation(com.art.artcommon.annotations.CachedTable)")
     public void cached(){}
 
     //设定限流量
