@@ -3,27 +3,29 @@ package com.art.artweb.controller;
 //import com.art.artcommon.mapper.WatcherMapper;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.art.artadmin.entity.User;
 import com.art.artadmin.mapper.UserMapper;
-import com.art.artcommon.custominterface.CachedTable;
-import com.art.artcommon.custominterface.Error;
+import com.art.artcommon.annotations.CachedTable;
+import com.art.artcommon.annotations.Error;
+import com.art.artcommon.entity.IPManager;
 import com.art.artcommon.entity.IResult;
-import com.art.artcommon.entity.Store;
-import com.art.artcommon.utils.DBUtils;
-import com.art.artcommon.utils.JWTUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.utils.*;
+//import com.art.artcommon.utils.MongoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StopWatch;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import java.sql.Connection;
+import javax.validation.Valid;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +33,14 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/test")
 @Slf4j
 public class TestController {
+
+    @RequestMapping("/justTest")
+    public IResult justTest(@RequestBody @Valid IPManager data, HttpServletRequest request){
+        //new DataRender().start();
+        //String token = request.getHeader("token");
+        System.out.println(data.getIp());
+        return IResult.success();
+    }
 
     @RequestMapping("/getToken")
     public void getTokenTest(@RequestBody String data){
@@ -46,7 +56,7 @@ public class TestController {
         //DecodedJWT verify = JWTUtils.verify("");
         //System.out.println(verify.getClaim("email").asString());
         //System.out.println(Store.getInstance().get(Thread.currentThread().getName()).get("token验证"));
-        IResult result = (IResult) Store.getInstance().get(Thread.currentThread().getName()).get("token验证");
+        IResult result = (IResult) SafeStore.Instance().get(Thread.currentThread().getName()).get("token验证");
         String code = result.getCode();
         try {
             TimeUnit.SECONDS.sleep(3);
@@ -56,7 +66,7 @@ public class TestController {
         }
         if ("0000".equals(code)){
             System.out.println("业务正常进行>>>...");
-            Store.getInstance().remove(Thread.currentThread().getName());
+            SafeStore.Instance().remove(Thread.currentThread().getName());
         }
         return result.getMsg();
     }
@@ -152,5 +162,129 @@ public class TestController {
             log.info("go out...");
         });
         return IResult.success();
+    }
+
+//    @RequestMapping("/testPage")
+//    public IResult testPage(){
+//        JSONObject o1 = new JSONObject();
+//        JSONObject o2 = new JSONObject();
+//        JSONObject o3 = new JSONObject();
+//        JSONObject o4 = new JSONObject();
+//        JSONObject o5 = new JSONObject();
+//        o1.put("name","1");
+//        o1.put("pwd","1");
+//        o2.put("name","2");
+//        o2.put("pwd","2");
+//        o3.put("name","3");
+//        o3.put("pwd","3");
+//        o4.put("name","4");
+//        o4.put("pwd","4");
+//        o5.put("name","5");
+//        o5.put("pwd","5");
+//        List<JSONObject> list = new ArrayList<JSONObject>(){{
+//           add(o1);
+//           add(o2);
+//           add(o3);
+//           add(o4);
+//           add(o5);
+//        }};
+//        PageMaster res = PageMaster.create(list,5);
+//        return IResult.success(res);
+//    }
+
+    @RequestMapping("/testAsync")
+    public IResult testAsync(@RequestBody JSONObject data){
+        String msg = data.getString("msg");
+        CompletableFuture.supplyAsync(()->{
+            try {
+                log.info("go in CompletableFuture");
+                TimeUnit.SECONDS.sleep(6);
+                log.info("finish");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }).thenAccept(a->{
+            try {
+                TimeUnit.SECONDS.sleep(4);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("=="+a);
+        });
+        return IResult.success("ok!!!",null);
+    }
+
+    public List ddd(List list){
+        list.remove(0);
+        return list;
+    }
+
+    @RequestMapping("/testMongo")
+    public IResult testMongo(@RequestBody JSONObject data){
+//        MongoClient<NamePublished> client = new MongoClient<>(NamePublished.class);
+//        List<NamePublished> onlinePublishedList = client.queryByFilter("email", "123@4.com", "", true);
+//        System.out.println(onlinePublishedList.size()==0);
+        Map map = new HashMap();
+        map.put("1",1);
+        map.put("2",2);
+        map.put("3",3);
+        List list = new ArrayList();
+        List index = new ArrayList();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        index.add(0);
+        System.out.println(list.toString());
+        List ddd = ddd(list);
+        System.out.println(ddd.toString());
+        System.out.println(list.toString());
+        return IResult.success("ok",null);
+    }
+
+    @RequestMapping("/testRandom")
+    public IResult testRandom(@RequestBody JSONObject data){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        List<Integer> list = Tools.getRandom(data.getIntValue("a"));
+        stopWatch.stop();
+        String str = list.toString();
+        JSONObject object = new JSONObject();
+        object.put("list",str);
+        object.put("cost",""+stopWatch.getTotalTimeMillis());
+        return IResult.success(object);
+    }
+
+    //@Autowired
+    //private TestService service;
+
+    @RequestMapping("/testScheduled")
+    public IResult testScheduled(@RequestBody JSONObject data){
+        return IResult.success();
+    }
+
+    LinkedBlockingQueue<Integer> queue = new LinkedBlockingQueue<>();
+
+    public String addQ(String msg){
+        queue.add(1);
+        queue.add(2);
+        queue.add(3);
+        submit();
+        return "123";
+    }
+
+    //@Scheduled(fixedDelay = 1000)
+    public void submit(){
+        //Integer i = queue.poll();
+        //log.info("current_>>>>>>>>: "+i);
+        //log.info("size_>>>>>>>>: "+queue.size());
+        log.info("submit");
+    }
+
+    @PostMapping("/testIllegalWord")
+    public IResult testIllegalWord(@RequestBody JSONObject data){
+        JSONObject o = new JSONObject();
+        o.put("info","info");
+        return IResult.success(o);
     }
 }

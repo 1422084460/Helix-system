@@ -12,32 +12,32 @@ import java.util.HashMap;
  * @create 2022/11/9
  */
 @Slf4j
-public class Store extends HashMap<String,HashMap<String,Object>> {
+public class SafeStore extends HashMap<String,HashMap<String,Object>> {
 
     /**
      * 构造方法
      */
-    private Store(){}
+    private SafeStore(){}
 
     /**
      * 静态内部类
      */
     private static class createStore{
-        private static final Store store = new Store();
+        private static final SafeStore SAFE_STORE = new SafeStore();
     }
 
     /**
      * 获取 Store
      */
-    public static Store getInstance(){
-        return createStore.store;
+    public static SafeStore Instance(){
+        return createStore.SAFE_STORE;
     }
 
     /**
      * 初始化 Store
      */
     public static void init(){
-        createStore.store.put(R.RENDER_LOCK,null);
+        createStore.SAFE_STORE.put(R.RENDER_LOCK,null);
     }
 
     public HashMap<String, Object> MainDataPut(String k,Object v){

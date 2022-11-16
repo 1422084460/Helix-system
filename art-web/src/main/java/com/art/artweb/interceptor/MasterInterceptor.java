@@ -4,7 +4,7 @@ import com.art.artcommon.constant.CustomException;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IPManager;
 import com.art.artcommon.entity.IResult;
-import com.art.artcommon.entity.Store;
+import com.art.artcommon.entity.SafeStore;
 import com.art.artcommon.mapper.IPManagerMapper;
 import com.art.artcommon.utils.JWTUtils;
 import com.art.artcommon.utils.RedisUtil;
@@ -26,7 +26,7 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
 
-        if (Store.getInstance().containsKey(R.RENDER_LOCK)){
+        if (SafeStore.Instance().containsKey(R.RENDER_LOCK)){
             throw new CustomException(R.CODE_FAIL, "访问受限");
         }
 
@@ -54,13 +54,13 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
         try {
             JWTUtils.verify(token);
             res = IResult.success(null);
-            Store.getInstance().put(name,Store.getInstance().MainDataPut("token验证", res));
+            SafeStore.Instance().put(name, SafeStore.Instance().MainDataPut("token验证", res));
             return true;
         }catch (TokenExpiredException e){
             log.error("用户"+name+"访问："+request.getRequestURI()+"接口异常===>>"+e.getMessage());
             res = IResult.fail(null,R.MSG_TOKEN_EXPIRE,R.CODE_TOKEN_EXPIRE);
             if (request.getRequestURI().equals("/api/user/login")){
-                Store.getInstance().put(name,Store.getInstance().MainDataPut("token验证", res));
+                SafeStore.Instance().put(name, SafeStore.Instance().MainDataPut("token验证", res));
                 return true;
             }
             throw new TokenExpiredException(R.MSG_TOKEN_EXPIRE);

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.art.artcommon.constant.R;
 import com.art.artcommon.entity.IPManager;
-import com.art.artcommon.entity.Store;
+import com.art.artcommon.entity.SafeStore;
 import com.art.artcommon.utils.DBUtils;
 import com.art.artcommon.utils.MongoClient;
 import com.art.artcommon.utils.RedisUtil;
@@ -94,7 +94,7 @@ public class DataRender {
                 e.printStackTrace();
             }
             //此处解锁项目访问权限
-            Store.getInstance().remove(R.RENDER_LOCK);
+            SafeStore.Instance().remove(R.RENDER_LOCK);
             log.info("unlock... and import: success!");
         });
     }
