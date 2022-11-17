@@ -1,6 +1,6 @@
 package com.art.artadmin.listener;
 
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User_log;
 import com.art.artadmin.mapper.User_logMapper;
 import com.art.artcommon.utils.RedisUtil;
@@ -26,9 +26,8 @@ public class SyncListener {
         if (data.equals("ready")){
             List<User_log> list = new ArrayList<>();
             try {
-                LinkedBlockingQueue<User_log> q = (LinkedBlockingQueue<User_log>) SafeStore.Instance().get("batch_deliver").get("user_log");
-                SafeStore.Instance().get("batch_deliver").remove("user_log");
-                SafeStore.Instance().remove("batch_deliver");
+                LinkedBlockingQueue<User_log> q = (LinkedBlockingQueue<User_log>) Store.Instance().safeGet("batch_deliver", "user_log");
+                Store.Instance().remove("batch_deliver");
                 q.drainTo(list,q.size());
                 mapper.insertBatch(list);
                 RedisUtil.set("user_log_queue_sync_finished","true");

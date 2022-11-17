@@ -1,6 +1,6 @@
 package com.art.artweb;
 
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.*;
 import com.art.artadmin.handler.Handler;
 import com.art.artweb.render.DataRender;
@@ -61,7 +61,7 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
      */
     @Order(1)
     private void initStore(){
-        SafeStore.init();
+        Store.init();
         log.info("store initializes already...");
     }
 

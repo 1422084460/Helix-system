@@ -9,7 +9,7 @@ import com.art.artcommon.constant.R;
 import com.art.artcommon.annotations.AuthL;
 import com.art.artcommon.annotations.ShowArgs;
 import com.art.artcommon.entity.IResult;
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.Tools;
@@ -62,7 +62,7 @@ public class UserController {
             loginStatus = userAuthService.verifyCode(data.getCode(),data.getEmail());
         }
         if (loginStatus.isSuccess()){
-            IResult res = (IResult) SafeStore.Instance().get(Thread.currentThread().getName()).get("token验证");
+            IResult res = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "token验证");
             RedisUtil.set("user_auth_" + data.getEmail(),"login",10, TimeUnit.SECONDS);
             if (res.getCode().equals("9101")){
                 Object user = loginStatus.getData().get("user");

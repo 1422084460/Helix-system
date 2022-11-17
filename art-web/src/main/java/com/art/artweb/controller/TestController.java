@@ -8,7 +8,7 @@ import com.art.artcommon.annotations.CachedTable;
 import com.art.artcommon.annotations.Error;
 import com.art.artcommon.entity.IPManager;
 import com.art.artcommon.entity.IResult;
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.*;
 //import com.art.artcommon.utils.MongoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class TestController {
         //DecodedJWT verify = JWTUtils.verify("");
         //System.out.println(verify.getClaim("email").asString());
         //System.out.println(Store.getInstance().get(Thread.currentThread().getName()).get("token验证"));
-        IResult result = (IResult) SafeStore.Instance().get(Thread.currentThread().getName()).get("token验证");
+        IResult result = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "token验证");
         String code = result.getCode();
         try {
             TimeUnit.SECONDS.sleep(3);
@@ -66,7 +66,7 @@ public class TestController {
         }
         if ("0000".equals(code)){
             System.out.println("业务正常进行>>>...");
-            SafeStore.Instance().remove(Thread.currentThread().getName());
+            Store.Instance().remove(Thread.currentThread().getName());
         }
         return result.getMsg();
     }

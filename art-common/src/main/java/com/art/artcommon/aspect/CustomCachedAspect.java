@@ -2,7 +2,7 @@ package com.art.artcommon.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.art.artcommon.annotations.Cached;
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artcommon.utils.AopTargetUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -50,8 +50,7 @@ public class CustomCachedAspect {
         object.put("timeout",timeout);
         object.put("timeunit",timeunit);
         String name = Thread.currentThread().getName();//name换成email
-        SafeStore.Instance().put(name,
-                SafeStore.Instance().MainDataPut("cache_args",object));
+        Store.Instance().safePut(name, "cache_args", object);
         System.out.println("aop线程:"+name);
         System.out.println("结束Before");
     }

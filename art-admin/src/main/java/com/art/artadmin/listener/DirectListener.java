@@ -2,7 +2,7 @@ package com.art.artadmin.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.art.artcommon.entity.SafeStore;
+import com.art.artcommon.entity.Store;
 import com.art.artadmin.entity.User_log;
 import com.art.artcommon.utils.RedisUtil;
 import com.art.artcommon.utils.SpringContextHolder;
@@ -48,7 +48,7 @@ public class DirectListener {
 
     private void doDupThing(){
         latch = new CountDownLatch(10);
-        SafeStore.Instance().put("batch_deliver", SafeStore.Instance().MainDataPut("user_log",batchQueue));
+        Store.Instance().safePut("batch_deliver", "user_log", batchQueue);
         handler.handler("doBatchSync","ready");
         while (true){
             if (RedisUtil.get("user_log_queue_sync_finished").equals("true")){
