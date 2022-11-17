@@ -62,7 +62,7 @@ public class UserController {
             loginStatus = userAuthService.verifyCode(data.getCode(),data.getEmail());
         }
         if (loginStatus.isSuccess()){
-            IResult res = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "token验证");
+            IResult res = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "access_token");
             RedisUtil.set("user_auth_" + data.getEmail(),"login",10, TimeUnit.SECONDS);
             if (res.getCode().equals("9101")){
                 Object user = loginStatus.getData().get("user");

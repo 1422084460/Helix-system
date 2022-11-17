@@ -55,8 +55,8 @@ public class TestController {
         System.out.println("测试进来了...");
         //DecodedJWT verify = JWTUtils.verify("");
         //System.out.println(verify.getClaim("email").asString());
-        //System.out.println(Store.getInstance().get(Thread.currentThread().getName()).get("token验证"));
-        IResult result = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "token验证");
+        //System.out.println(Store.getInstance().get(Thread.currentThread().getName()).get("access_token"));
+        IResult result = (IResult) Store.Instance().safeGet(Thread.currentThread().getName(), "access_token");
         String code = result.getCode();
         try {
             TimeUnit.SECONDS.sleep(3);
