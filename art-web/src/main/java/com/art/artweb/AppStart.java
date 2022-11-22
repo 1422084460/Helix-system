@@ -10,7 +10,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -42,7 +41,6 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
 //                .getDeclaredMethod("handler", String.class, String.class).getAnnotation(Error.class).name());
     }
 
-    @Order(2)
     private void initRedis() {
         if (!RedisUtil.hasKey("isInitAlready")){
             Map<String,String> map = new HashMap<>();
@@ -59,7 +57,6 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
     /**
      * 初始化全局变量 Store
      */
-    @Order(1)
     private void initStore(){
         Store.init();
         log.info("store initializes already...");
@@ -71,7 +68,6 @@ public class AppStart implements ApplicationListener<ApplicationStartedEvent> {
     /**
      * 导入数据至 redis
      */
-    @Order(3)
     private void importData(){
         dataRender.start();
         log.info("import data to redis already...");

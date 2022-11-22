@@ -8,7 +8,7 @@ public class R {
     /**
      * 一般常量
      */
-    public static final String RENDER_LOCK = "RENDER_LOCK";
+    public static final String RENDER_LOCK = "SYSTEM_INITIALIZING_LOCK";
 
     /**
      * 结果相关
@@ -62,11 +62,6 @@ public class R {
     public static final String MSG_BAD_REQUEST_AGAIN = "请求过于频繁，请于";
     public static final String CODE_ACCESS_DENIED = "9202";
     public static final String MSG_ACCESS_DENIED = "拒绝访问";
-
-    /**
-     * 文件相关
-     */
-    public static final String SAVE_DATA_PATH = "/usr/local/simulator/saveData.txt";
 
     /**
      * 验证相关

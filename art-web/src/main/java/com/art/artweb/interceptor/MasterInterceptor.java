@@ -32,14 +32,14 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
 
         String ip = Tools.getIpAddr(request);
         if (!ifInBlackList(ip)) {
-            if (!RedisUtil.hasKey(ip+"_access")){
+            if (!RedisUtil.hasKey(ip + "_access")){
                 boolean ips = ifRealOne(ip);
                 if (!ips) {
                     addToIPM(ip);
                     throw new CustomException(R.CODE_BAD_REQUEST, R.MSG_BAD_REQUEST);
                 }
             }else {
-                throw new CustomException(R.CODE_BAD_REQUEST_AGAIN, R.MSG_BAD_REQUEST_AGAIN+RedisUtil.getExpire(ip+"_access")+"秒后再试");
+                throw new CustomException(R.CODE_BAD_REQUEST_AGAIN, R.MSG_BAD_REQUEST_AGAIN + RedisUtil.getExpire(ip+"_access") + "秒后再试");
             }
         }else {
             throw new CustomException(R.CODE_ACCESS_DENIED, R.MSG_ACCESS_DENIED);
@@ -53,12 +53,12 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
         String name = Thread.currentThread().getName();
         try {
             JWTUtils.verify(token);
-            res = IResult.success(null);
+            res = IResult.success();
             Store.Instance().safePut(name, "access_token", res);
             return true;
         }catch (TokenExpiredException e){
             log.error("用户"+name+"访问："+request.getRequestURI()+"接口异常===>>"+e.getMessage());
-            res = IResult.fail(null,R.MSG_TOKEN_EXPIRE,R.CODE_TOKEN_EXPIRE);
+            res = IResult.fail(R.MSG_TOKEN_EXPIRE, R.CODE_TOKEN_EXPIRE);
             if (request.getRequestURI().equals("/api/user/login")){
                 Store.Instance().safePut(name, "access_token", res);
                 return true;
@@ -74,7 +74,7 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
         Long nums = RedisUtil.inc(ip,false);
         RedisUtil.setExpire(ip,10, TimeUnit.SECONDS);
         if (nums > 10){
-            RedisUtil.set(ip+"_access","access_denied",60,TimeUnit.MINUTES);
+            RedisUtil.set(ip+"_access","access_denied",60, TimeUnit.MINUTES);
             return false;
         }
         return true;
@@ -84,7 +84,7 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
 
     private void addToIPM(String ip){
         QueryWrapper<IPManager> wrapper = new QueryWrapper<>();
-        wrapper.eq("ip",ip);
+        wrapper.eq("ip", ip);
         IPManager one = ipManagerMapper.selectOne(wrapper);
         if (one == null){
             IPManager ipManager = new IPManager()
@@ -94,15 +94,15 @@ public class MasterInterceptor extends HandlerInterceptorAdapter {
             ipManagerMapper.insert(ipManager);
         }else if (one.getCount()<3 && !one.isBlacklist()){
             int count = one.getCount();
-            int newCount = count+1;
+            int newCount = count + 1;
             UpdateWrapper<IPManager> wrapper1 = new UpdateWrapper<>();
-            wrapper1.set("count",newCount).eq("ip",ip);
-            ipManagerMapper.update(null,wrapper1);
-        }else if (one.getCount()==3 && !one.isBlacklist()){
+            wrapper1.set("count",newCount).eq("ip", ip);
+            ipManagerMapper.update(null, wrapper1);
+        }else if (one.getCount() == 3 && !one.isBlacklist()){
             UpdateWrapper<IPManager> wrapper1 = new UpdateWrapper<>();
-            wrapper1.set("blacklist",true).eq("ip",ip);
-            ipManagerMapper.update(null,wrapper1);
-            RedisUtil.setHash("blacklist",ip,"true",0,TimeUnit.SECONDS);
+            wrapper1.set("blacklist",true).eq("ip", ip);
+            ipManagerMapper.update(null, wrapper1);
+            RedisUtil.setHash("blacklist", ip,"true",0, TimeUnit.SECONDS);
         }
     }
 
