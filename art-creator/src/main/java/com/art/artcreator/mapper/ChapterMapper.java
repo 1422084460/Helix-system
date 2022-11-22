@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * description
- *
+ * 章节信息db操作映射
  * @author lou
  * @create 2022/8/29
  */
