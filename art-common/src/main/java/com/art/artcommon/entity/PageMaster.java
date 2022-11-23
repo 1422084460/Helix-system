@@ -14,6 +14,11 @@ import java.util.List;
 public class PageMaster extends JSONObject {
 
     /**
+     * 默认每页计数
+     */
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    /**
      * 总页数
      */
     private int count;
@@ -31,7 +36,7 @@ public class PageMaster extends JSONObject {
     /**
      * 物理页面组
      */
-    public List pages = new ArrayList();
+    public List<Object> pages = new ArrayList<>();
 
     /**
      * 获取总页数
@@ -67,13 +72,13 @@ public class PageMaster extends JSONObject {
         int targetCount = targetList.size();
         this.count = computePages(targetCount,pageSize);
         this.currentPage = 1;
-        if (count==1){
+        if (count == 1){
             pages.add(targetList);
         }else {
             cutPages(targetList);
         }
-        put("pages",pages);
-        put("size",targetList.size());
+        put("pages", pages);
+        put("size", targetList.size());
     }
 
     /**
@@ -82,8 +87,8 @@ public class PageMaster extends JSONObject {
      * @param pageSize 每页计数
      * @return int
      */
-    private int computePages(int targetCount,int pageSize){
-        if (targetCount<=pageSize){
+    private int computePages(int targetCount, int pageSize){
+        if (targetCount <= pageSize){
             return 1;
         }else {
             return targetCount/pageSize + 1;
@@ -97,9 +102,9 @@ public class PageMaster extends JSONObject {
     private void cutPages(List<Object> targetList){
         int sum = count;
         int start = 0;
-        for (int i=1;i<=sum;i++){
+        for (int i = 1;i <= sum;i++){
             List<Object> sub;
-            if ((targetList.size()-(i-1)*pageSize)>pageSize){
+            if ((targetList.size()-(i-1)*pageSize) > pageSize){
                 sub = targetList.subList(start, start + pageSize);
             }else {
                 sub = targetList.subList(start, targetList.size());
@@ -115,8 +120,8 @@ public class PageMaster extends JSONObject {
      * @param pageSize 每页计数
      * @return PageMaster
      */
-    public static PageMaster create(List<Object> targetList,int pageSize){
-        return new PageMaster(targetList,pageSize);
+    public static PageMaster create(List<Object> targetList, int pageSize){
+        return new PageMaster(targetList, pageSize);
     }
 
     /**
@@ -125,6 +130,6 @@ public class PageMaster extends JSONObject {
      * @return PageMaster
      */
     public static PageMaster create(List<Object> targetList){
-        return new PageMaster(targetList,10);
+        return new PageMaster(targetList, DEFAULT_PAGE_SIZE);
     }
 }
