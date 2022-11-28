@@ -72,7 +72,7 @@ public class StoryNameService {
         if (last_has_num!=1){
             lastRandom2 = Tools.reSort(lastRandom.size());
         }
-        //筛选出的集合数小于30的情况
+        //筛选出的集合数小于50的情况
         int size = Math.min(firstRandom.size(),lastRandom.size());
         if (firstRandom.size()!=default_firstNameNum){
             while (size>0){
