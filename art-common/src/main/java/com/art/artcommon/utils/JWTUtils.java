@@ -18,18 +18,15 @@ public class JWTUtils {
     //生成token
     public static String getToken(Map<String,String> map){
         JWTCreator.Builder builder = JWT.create();
-        map.forEach((k,v)->{
-            builder.withClaim(k,v);
-        });
+        map.forEach(builder::withClaim);
         Calendar instance = Calendar.getInstance();
         instance.add(Calendar.SECOND,EXPIRE_TIME);
         builder.withExpiresAt(instance.getTime());
-        return builder.sign(Algorithm.HMAC256(signature)).toString();
+        return builder.sign(Algorithm.HMAC256(signature));
     }
 
     //验证token
     public static DecodedJWT verify(String token){
-        DecodedJWT verify = JWT.require(Algorithm.HMAC256(signature)).build().verify(token);
-        return verify;
+        return JWT.require(Algorithm.HMAC256(signature)).build().verify(token);
     }
 }

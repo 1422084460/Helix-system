@@ -71,10 +71,10 @@ public class UserAuthService {
      * @return String
      */
     public String createToken(String data,String[] payload_args){
-        Map map = JSON.parseObject(data);
-        Map payload = new HashMap();
+        JSONObject map = JSON.parseObject(data);
+        Map<String,String> payload = new HashMap<>();
         for (String s : payload_args){
-            payload.put(s,map.get(s));
+            payload.put(s,map.getString(s));
         }
         return JWTUtils.getToken(payload);
     }

@@ -20,9 +20,7 @@ public class NameBaseInfo {
 
     @NotBlank(message = "所属地域不能为空")
     private String area;
-    @NotBlank(message = "性别偏向不能为空")
     private String category;
-    @NotBlank(message = "风格不能为空")
     private String style;
     @NotNull(message = "姓字数不能为空")
     private Integer first_has_num;
