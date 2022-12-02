@@ -48,13 +48,13 @@ public class MongoClient<T> {
 
     /**
      * 根据单个条件筛选获取部分mongo集合文档
-     * @param condition 筛选条件
+     * @param column 筛选字段
      * @param value 对应值
      * @param order 排序字段
      * @return List<T>
      */
-    public List<T> queryByFilter(String condition,Object value,String order,boolean isAsc) {
-        Query<T> query = datastore.createQuery(clazz).filter(condition, value);
+    public List<T> queryByFilter(String column,Object value,String order,boolean isAsc) {
+        Query<T> query = datastore.createQuery(clazz).filter(column, value);
         if (!order.equals("")){
             if (isAsc){
                 query.order(order);
@@ -89,12 +89,12 @@ public class MongoClient<T> {
 
     /**
      * 根据单个条件筛选获取单个mongo集合文档
-     * @param condition 筛选条件
+     * @param column 筛选字段
      * @param value 对应值
      * @return Object
      */
-    public T queryOne(String condition,Object value) {
-        Query<T> query = datastore.createQuery(clazz).filter(condition,value);
+    public T queryOne(String column,Object value) {
+        Query<T> query = datastore.createQuery(clazz).filter(column,value);
         MorphiaCursor<T> cursor = query.find();
         return cursor.toList().get(0);
     }
