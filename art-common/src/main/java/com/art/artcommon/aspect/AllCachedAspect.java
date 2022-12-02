@@ -90,7 +90,7 @@ public class AllCachedAspect {
             }
             sql = String.format("select %s from %s",s,tableName);
         }
-        String result = dbUtils.executeSql(sql);
+        String result = dbUtils.execute(sql);
         RedisUtil.set(cache_key,result,timeout,timeunit);
         log.info("缓存"+tableName+"表数据完成...");
     }

@@ -104,7 +104,7 @@ public class DataRender {
      */
     private void importBlackList(){
         String sql = "select * from Admin_IPM where blacklist is true";
-        String result = dbUtils.executeSql(sql);
+        String result = dbUtils.execute(sql);
         List<IPManager> list = JSON.parseObject(result, new TypeReference<List<IPManager>>(){});
         Map<String, Map<String,String>> hashCmd = new HashMap<>();
         Map<String,String> map = new HashMap<>();
@@ -143,7 +143,7 @@ public class DataRender {
     private void cachedRank(String column,String key){
         RedisUtil.deleteKey(key);
         String sql = String.format("select * from Story_NovelChapterList order by %s limit 20",column);
-        String result = dbUtils.executeSql(sql);
+        String result = dbUtils.execute(sql);
         List<Novel> list = JSON.parseObject(result, new TypeReference<List<Novel>>(){});
         Map<String,Double> innerMap = new HashMap<>();
         Map<String,Map<String,Double>> zSetCmd = new HashMap<>();

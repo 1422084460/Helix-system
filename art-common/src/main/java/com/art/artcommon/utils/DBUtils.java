@@ -24,7 +24,7 @@ public class DBUtils {
     @Autowired
     private DataSource dataSource;
 
-    public String executeSql(String sql){
+    public String execute(String sql){
         template.setDataSource(dataSource);
         List<Map<String, Object>> maps = template.queryForList(sql);
         return JSON.toJSONString(maps);
