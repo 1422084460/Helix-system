@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan(basePackages = {"com.art.**.mapper"})
 public class HelixApplication {
-
+//
     public static void main(String[] args) {
         SpringApplication.run(HelixApplication.class, args);
     }
